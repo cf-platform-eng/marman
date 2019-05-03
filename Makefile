@@ -48,9 +48,6 @@ build-darwin: build/marman-darwin
 build/marman-darwin:
 	GOARCH=amd64 GOOS=darwin go build -o build/marman-darwin ./cmd/marman/main.go
 
-clean:
-	rm -rf build
-
 test: deps lint
 	ginkgo -r .
 

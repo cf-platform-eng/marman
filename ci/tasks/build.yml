@@ -8,7 +8,7 @@ run:
   path: make
   dir: source
   args:
-    - build
+    - build-all
 
 outputs:
   - name: build
