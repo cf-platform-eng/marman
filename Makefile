@@ -36,8 +36,20 @@ build/marman: $(SRC) deps
 
 build: build/marman
 
-build-linux:
+build-all: build-linux build-darwin
+
+build-linux: build/marman-linux
+
+build/marman-linux:
 	GOARCH=amd64 GOOS=linux go build -o build/marman-linux ./cmd/marman/main.go
+
+build-darwin: build/marman-darwin
+
+build/marman-darwin:
+	GOARCH=amd64 GOOS=darwin go build -o build/marman-darwin ./cmd/marman/main.go
+
+clean:
+	rm -rf build
 
 test: deps lint
 	ginkgo -r .
