@@ -11,5 +11,5 @@ run:
     - build
 
 outputs:
-  - name: marman-linux
+  - name: build
     path: source/build
