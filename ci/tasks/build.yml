@@ -10,6 +10,6 @@ run:
   args:
     - build
 
-outputs:
-  - name: marman-linux
-    path: source/build/marman
+# outputs:
+#   - name: marman-linux
+#     path: source/build/marman
