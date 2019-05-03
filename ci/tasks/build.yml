@@ -2,14 +2,14 @@
 platform: linux
 
 inputs:
-  - name: marman
+  - name: source
 
 run:
   path: make
-  dir: marman/marman
+  dir: source
   args:
     - build
 
 outputs:
   - name: marman-linux
-    path: marman/marman/build/marman
+    path: source/build/marman
