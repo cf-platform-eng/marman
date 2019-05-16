@@ -7,12 +7,14 @@ inputs:
 
 run:
   path: /bin/bash
-  dir: source
   args:
     - -exc
     - |
+      ls version
       export VERSION=$(cat version/marman)
+      pushd source
       make build-all
+      popd
 
 outputs:
   - name: build
