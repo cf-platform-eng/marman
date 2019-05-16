@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/downloadrelease"
+	"github.com/cf-platform-eng/marman/downloadrelease"
 	"os"
 
 	"code.cloudfoundry.org/lager"
 
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman"
+	"github.com/cf-platform-eng/marman"
 
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/downloadstemcell"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/downloadtile"
+	"github.com/cf-platform-eng/marman/downloadstemcell"
+	"github.com/cf-platform-eng/marman/downloadtile"
+	"github.com/cf-platform-eng/marman/version"
 
 	"github.com/jessevdk/go-flags"
 )
@@ -58,6 +59,12 @@ func main() {
 		fmt.Println("Could not add download-tile command")
 		os.Exit(1)
 	}
+
+	_, err = parser.AddCommand(
+		"version",
+	    "print version",
+        "print marman version",
+        &version.VersionOpt{})
 
 	_, err = parser.Parse()
 	if err != nil {

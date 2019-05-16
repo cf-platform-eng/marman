@@ -31,8 +31,12 @@ deps: deps-goimports deps-go-binary
 # #### BUILD ####
 SRC = $(shell find . -name "*.go" | grep -v "_test\." )
 
+VERSION := $(or $(VERSION), "dev")
+
+LDFLAGS="-X github.com/cf-platform-eng/marman/version.Version=$(VERSION)"
+
 build/marman: $(SRC) deps
-	go build -o build/marman ./cmd/marman/main.go
+	go build -o build/marman -ldflags ${LDFLAGS} ./cmd/marman/main.go
 
 build: build/marman
 
@@ -41,12 +45,12 @@ build-all: build-linux build-darwin
 build-linux: build/marman-linux
 
 build/marman-linux:
-	GOARCH=amd64 GOOS=linux go build -o build/marman-linux ./cmd/marman/main.go
+	GOARCH=amd64 GOOS=linux go build -o build/marman-linux -ldflags ${LDFLAGS} ./cmd/marman/main.go
 
 build-darwin: build/marman-darwin
 
 build/marman-darwin:
-	GOARCH=amd64 GOOS=darwin go build -o build/marman-darwin ./cmd/marman/main.go
+	GOARCH=amd64 GOOS=darwin go build -o build/marman-darwin -ldflags ${LDFLAGS} ./cmd/marman/main.go
 
 test: deps lint
 	ginkgo -r .

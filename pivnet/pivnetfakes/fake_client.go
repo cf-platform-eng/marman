@@ -5,7 +5,7 @@ import (
 	sync "sync"
 
 	semver "github.com/Masterminds/semver"
-	pivnet "github.com/cf-platform-eng/isv-ci-toolkit/marman/pivnet"
+	pivnet "github.com/cf-platform-eng/marman/pivnet"
 	pivneta "github.com/pivotal-cf/go-pivnet"
 )
 

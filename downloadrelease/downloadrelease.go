@@ -3,8 +3,8 @@ package downloadrelease
 import (
 	"code.cloudfoundry.org/lager"
 	"fmt"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman"
-	github2 "github.com/cf-platform-eng/isv-ci-toolkit/marman/github"
+	"github.com/cf-platform-eng/marman"
+	github2 "github.com/cf-platform-eng/marman/github"
 	"github.com/google/go-github/v25/github"
 	"github.com/pkg/errors"
 	"path"

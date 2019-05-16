@@ -5,7 +5,7 @@ import (
 	io "io"
 	sync "sync"
 
-	github "github.com/cf-platform-eng/isv-ci-toolkit/marman/github"
+	github "github.com/cf-platform-eng/marman/github"
 	githuba "github.com/google/go-github/v25/github"
 )
 

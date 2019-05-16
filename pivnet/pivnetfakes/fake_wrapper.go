@@ -6,7 +6,7 @@ import (
 	os "os"
 	sync "sync"
 
-	pivnet "github.com/cf-platform-eng/isv-ci-toolkit/marman/pivnet"
+	pivnet "github.com/cf-platform-eng/marman/pivnet"
 	pivneta "github.com/pivotal-cf/go-pivnet"
 	download "github.com/pivotal-cf/go-pivnet/download"
 )

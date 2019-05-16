@@ -5,7 +5,7 @@ import (
 
 	"github.com/Masterminds/semver"
 
-	pivnetClient "github.com/cf-platform-eng/isv-ci-toolkit/marman/pivnet"
+	pivnetClient "github.com/cf-platform-eng/marman/pivnet"
 	"github.com/pivotal-cf/go-pivnet"
 	"github.com/pkg/errors"
 )
