@@ -10,8 +10,6 @@ run:
   args:
     - -exc
     - |
-      cat version/version
-      cat version/number
       export VERSION=$(cat version/version)
       pushd source
       make build-all
