@@ -10,8 +10,9 @@ run:
   args:
     - -exc
     - |
-      ls version
-      export VERSION=$(cat version/marman)
+      cat version/version
+      cat version/number
+      export VERSION=$(cat version/version)
       pushd source
       make build-all
       popd
