@@ -5,8 +5,8 @@ import (
 
 	"code.cloudfoundry.org/lager"
 
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/downloadstemcell"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/pivnet/pivnetfakes"
+	"github.com/cf-platform-eng/marman/downloadstemcell"
+	"github.com/cf-platform-eng/marman/pivnet/pivnetfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"

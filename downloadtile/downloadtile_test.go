@@ -3,8 +3,8 @@ package downloadtile_test
 import (
 	"errors"
 
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/downloadtile"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/pivnet/pivnetfakes"
+	"github.com/cf-platform-eng/marman/downloadtile"
+	"github.com/cf-platform-eng/marman/pivnet/pivnetfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/pivotal-cf/go-pivnet"

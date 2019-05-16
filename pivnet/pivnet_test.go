@@ -6,8 +6,8 @@ import (
 
 	"code.cloudfoundry.org/lager"
 	"github.com/Masterminds/semver"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/pivnet"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/pivnet/pivnetfakes"
+	"github.com/cf-platform-eng/marman/pivnet"
+	"github.com/cf-platform-eng/marman/pivnet/pivnetfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"

@@ -1,9 +1,9 @@
 package downloadrelease_test
 
 import (
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/downloadrelease"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/github/githubfakes"
-	"github.com/cf-platform-eng/isv-ci-toolkit/marman/marmanfakes"
+	"github.com/cf-platform-eng/marman/downloadrelease"
+	"github.com/cf-platform-eng/marman/github/githubfakes"
+	"github.com/cf-platform-eng/marman/marmanfakes"
 	"github.com/google/go-github/v25/github"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

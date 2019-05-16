@@ -3,12 +3,16 @@ platform: linux
 
 inputs:
   - name: source
+  - name: version
 
 run:
-  path: make
+  path: /bin/bash
   dir: source
   args:
-    - build-all
+    - -exc
+    - |
+      export VERSION=$(cat version/marman)
+      make build-all
 
 outputs:
   - name: build

@@ -4,7 +4,7 @@ package marmanfakes
 import (
 	sync "sync"
 
-	marman "github.com/cf-platform-eng/isv-ci-toolkit/marman"
+	marman "github.com/cf-platform-eng/marman"
 )
 
 type FakeReadCloser struct {
