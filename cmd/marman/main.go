@@ -65,6 +65,10 @@ func main() {
 	    "print version",
         "print marman version",
         &version.VersionOpt{})
+	if err != nil {
+		fmt.Println("Could not add version command")
+		os.Exit(1)
+	}
 
 	_, err = parser.Parse()
 	if err != nil {
