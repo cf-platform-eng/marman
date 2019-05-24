@@ -89,7 +89,7 @@ func main() {
 		downloadPASOpts,
 	)
 	if err != nil {
-		fmt.Println("Could not add download-srt command")
+		fmt.Println("Could not add download-pas command")
 		os.Exit(1)
 	}
 
