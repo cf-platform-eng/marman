@@ -1,6 +1,8 @@
 package downloadtile
 
 import (
+	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/Masterminds/semver"
@@ -11,63 +13,50 @@ import (
 )
 
 type Config struct {
-	Name         string `short:"n" long:"name" description:"Tile name"`
 	Slug         string `short:"s" long:"slug" description:"PivNet slug name override"`
+	File         string `short:"f" long:"file" description:"RegEx pattern to select the specific file to download"`
 	Version      string `short:"v" long:"version" description:"Tile version"`
 	PivnetClient pivnetClient.Client
 	PivnetToken  string `long:"pivnet-token" description:"Authentication token for PivNet" env:"PIVNET_TOKEN"`
 }
 
-func nameToSlug(name string) (string, error) {
-	switch name {
-	case "pas":
-		return "cf", nil
-	case "srt":
-		return "cf", nil
-	default:
-		return "", errors.Errorf("unknown tile name %s", name)
+func filesToString(files []pivnet.ProductFile, filter string) string {
+	builder := strings.Builder{}
+	for _, file := range files {
+		matched, _ := regexp.MatchString(filter, file.AWSObjectKey)
+		if matched {
+			builder.WriteString(fmt.Sprintf("\n    %s", file.AWSObjectKey))
+		}
 	}
+	return builder.String()
+
 }
 
 func (cmd *Config) FindFile(productFiles []pivnet.ProductFile, id int) (*pivnet.ProductFile, error) {
 	var (
-		pattern string
-		err     error
+		err         error
+		productFile pivnet.ProductFile
 	)
-
-	switch cmd.Name {
-	case "pas":
-		pattern = "Pivotal Application Service"
-	case "srt":
-		pattern = "Small Footprint PAS"
-	default:
-		return nil, errors.Errorf("unable to find tile with name %s", cmd.Name)
-	}
-
-	var productFile *pivnet.ProductFile
+	productFile.ID = 0
 	for _, fileUnderConsideration := range productFiles {
-		if strings.Contains(fileUnderConsideration.Name, pattern) {
-			productFile = &fileUnderConsideration
-			break
+		matched, _ := regexp.MatchString(cmd.File, fileUnderConsideration.AWSObjectKey)
+		if matched {
+			if productFile.ID == 0 {
+				productFile = fileUnderConsideration
+			} else {
+				err = fmt.Errorf("too many matching files found with the given file filter \"%s\"%s", cmd.File, filesToString(productFiles, cmd.File))
+			}
 		}
 	}
 
-	if productFile == nil {
-		err = errors.Errorf("unable to find the tile with name %s", cmd.Name)
+	if productFile.ID == 0 {
+		err = errors.Errorf("unable to find the tile with name %s", cmd.File)
 	}
 
-	return productFile, err
+	return &productFile, err
 }
 
 func (cmd *Config) DownloadTile() error {
-	if cmd.Slug == "" {
-		slug, err := nameToSlug(cmd.Name)
-		if err != nil {
-			return errors.Wrapf(err, "could not find slug for tile name %s", cmd.Name)
-		}
-		cmd.Slug = slug
-	}
-
 	versionConstraint, err := semver.NewConstraint(cmd.Version)
 	if err != nil {
 		return errors.Wrapf(err, "tile version is not valid semver")

@@ -19,11 +19,11 @@ var _ = Describe("Download Tile", func() {
 	BeforeEach(func() {
 		pivnetClient = &pivnetfakes.FakeClient{}
 		cmd = &downloadtile.Config{
-			Name:         "srt",
+			Slug:         "cf",
+			File:         "pas",
 			PivnetClient: pivnetClient,
+			Version:      "2.4.2",
 		}
-
-		cmd.Version = "2.4.1"
 
 		pivnetClient.FindReleaseByVersionConstraintReturns(&pivnet.Release{
 			ID:      100,
@@ -32,8 +32,9 @@ var _ = Describe("Download Tile", func() {
 
 		pivnetClient.ListFilesForReleaseReturns([]pivnet.ProductFile{
 			{
-				ID:   123,
-				Name: "Small Footprint PAS",
+				ID:           123,
+				Name:         "Small Footprint PAS",
+				AWSObjectKey: "srt-download-link",
 				Links: &pivnet.Links{
 					Download: map[string]string{
 						"href": "srt-download-link",
@@ -41,8 +42,9 @@ var _ = Describe("Download Tile", func() {
 				},
 			},
 			{
-				ID:   456,
-				Name: "Pivotal Application Service",
+				ID:           456,
+				Name:         "Pivotal Application Service",
+				AWSObjectKey: "pas-download-link",
 				Links: &pivnet.Links{
 					Download: map[string]string{
 						"href": "pas-download-link",
@@ -78,29 +80,17 @@ var _ = Describe("Download Tile", func() {
 				slug, releaseID, file := pivnetClient.DownloadFileArgsForCall(0)
 				Expect(slug).To(Equal("cf"))
 				Expect(releaseID).To(Equal(100))
-				Expect(file.ID).To(Equal(123))
+				Expect(file.ID).To(Equal(456))
 			})
 		})
 	})
 
-	Context("Allows slug to override name", func() {
-		It("attempts to download the tile using the slug override", func() {
-			cmd = &downloadtile.Config{
-				Name:         "srt",
-				Slug:         "alternate-cf",
-				Version:      "2.4.1",
-				PivnetClient: pivnetClient,
-			}
-
+	Context("too many matching files", func() {
+		It("returns an error", func() {
+			cmd.File = "download-link"
 			err := cmd.DownloadTile()
-			Expect(err).ToNot(HaveOccurred())
-
-			By("getting the list of product files from PivNet", func() {
-				Expect(pivnetClient.ListFilesForReleaseCallCount()).To(Equal(1))
-				slug, releaseID := pivnetClient.ListFilesForReleaseArgsForCall(0)
-				Expect(slug).To(Equal("alternate-cf"))
-				Expect(releaseID).To(Equal(100))
-			})
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("too many matching files found with the given file filter \"download-link\"\n    srt-download-link\n    pas-download-link"))
 		})
 	})
 
