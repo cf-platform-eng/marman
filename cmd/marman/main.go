@@ -63,6 +63,36 @@ func main() {
 		os.Exit(1)
 	}
 
+	downloadSRTOpts := &downloadtile.Config{
+		Slug: "cf",
+		File: "srt-(.*)-(.*).pivotal$",
+	}
+	_, err = parser.AddCommand(
+		"download-srt",
+		"Download SRT",
+		"Download SRT tile from PivNet",
+		downloadSRTOpts,
+	)
+	if err != nil {
+		fmt.Println("Could not add download-srt command")
+		os.Exit(1)
+	}
+
+	downloadPASOpts := &downloadtile.Config{
+		Slug: "cf",
+		File: "cf-(.*)-(.*).pivotal$",
+	}
+	_, err = parser.AddCommand(
+		"download-pas",
+		"Download PAS",
+		"Download PAS tile from PivNet",
+		downloadPASOpts,
+	)
+	if err != nil {
+		fmt.Println("Could not add download-srt command")
+		os.Exit(1)
+	}
+
 	downloadTileOpts := &downloadtile.Config{}
 	_, err = parser.AddCommand(
 		"download-tile",
