@@ -44,12 +44,12 @@ build-all: build-linux build-darwin
 
 build-linux: build/marman-linux
 
-build/marman-linux:
+build/marman-linux: $(SRC) deps
 	GOARCH=amd64 GOOS=linux go build -o build/marman-linux -ldflags ${LDFLAGS} ./cmd/marman/main.go
 
 build-darwin: build/marman-darwin
 
-build/marman-darwin:
+build/marman-darwin: $(SRC) deps
 	GOARCH=amd64 GOOS=darwin go build -o build/marman-darwin -ldflags ${LDFLAGS} ./cmd/marman/main.go
 
 test: deps lint
