@@ -48,6 +48,21 @@ func main() {
 		os.Exit(1)
 	}
 
+	downloadPKSOpts := &downloadtile.Config{
+		Slug: "pivotal-container-service",
+		File: ".pivotal$",
+	}
+	_, err = parser.AddCommand(
+		"download-pks",
+		"Download pks",
+		"Download pks tile from PivNet",
+		downloadPKSOpts,
+	)
+	if err != nil {
+		fmt.Println("Could not add download-pks command")
+		os.Exit(1)
+	}
+
 	downloadTileOpts := &downloadtile.Config{}
 	_, err = parser.AddCommand(
 		"download-tile",
@@ -62,9 +77,9 @@ func main() {
 
 	_, err = parser.AddCommand(
 		"version",
-	    "print version",
-        "print marman version",
-        &version.VersionOpt{})
+		"print version",
+		"print marman version",
+		&version.VersionOpt{})
 	if err != nil {
 		fmt.Println("Could not add version command")
 		os.Exit(1)
