@@ -52,6 +52,9 @@ build-darwin: build/marman-darwin
 build/marman-darwin: $(SRC) deps
 	GOARCH=amd64 GOOS=darwin go build -o build/marman-darwin -ldflags ${LDFLAGS} ./cmd/marman/main.go
 
+build-image: build/marman-linux
+	docker build --tag cfplatformeng/marman:${VERSION} --file Dockerfile .
+
 test: deps lint
 	ginkgo -r .
 
