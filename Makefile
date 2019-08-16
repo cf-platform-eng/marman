@@ -31,7 +31,7 @@ deps: deps-goimports deps-go-binary
 # #### BUILD ####
 SRC = $(shell find . -name "*.go" | grep -v "_test\." )
 
-VERSION := $(or $(VERSION), "dev")
+VERSION := $(or $(VERSION), dev)
 
 LDFLAGS="-X github.com/cf-platform-eng/marman/version.Version=$(VERSION)"
 
