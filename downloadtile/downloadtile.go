@@ -13,9 +13,9 @@ import (
 )
 
 type Config struct {
-	Slug         string `short:"s" long:"slug" description:"PivNet slug name override"`
+	Slug         string `short:"s" long:"slug" required:"true" description:"Product slug name"`
 	File         string `short:"f" long:"file" description:"RegEx pattern to select the specific file to download"`
-	Version      string `short:"v" long:"version" description:"Tile version"`
+	Version      string `short:"v" long:"version" default:"X" default-mask:"latest GA" description:"Semver constraint for picking a release version"`
 	PivnetClient pivnetClient.Client
 	PivnetToken  string `long:"pivnet-token" description:"Authentication token for PivNet" env:"PIVNET_TOKEN"`
 }
@@ -85,6 +85,14 @@ func (cmd *Config) DownloadTile() error {
 	err = cmd.PivnetClient.DownloadFile(cmd.Slug, release.ID, productFile)
 
 	return err
+}
+
+func (cmd *Config) DownloadFromPivnet(slug, file, version, pivnetToken string) error {
+	cmd.Slug = slug
+	cmd.File = file
+	cmd.Version = version
+	cmd.PivnetClient = pivnetClient.NewPivNetClient(pivnetToken)
+	return cmd.DownloadTile()
 }
 
 func (cmd *Config) Execute(args []string) error {

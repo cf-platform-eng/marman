@@ -2,10 +2,11 @@ package github
 
 import (
 	"context"
-	"github.com/google/go-github/v25/github"
-	"golang.org/x/oauth2"
 	"io"
 	"net/http"
+
+	"github.com/google/go-github/v25/github"
+	"golang.org/x/oauth2"
 )
 
 //go:generate counterfeiter Client
@@ -15,7 +16,7 @@ type Client interface {
 }
 
 type GitHubClient struct {
-	Client *github.Client
+	Client  *github.Client
 	context context.Context
 }
 
@@ -31,7 +32,7 @@ func NewGitHubClient(token string) *GitHubClient {
 	}
 
 	return &GitHubClient{
-		Client: github.NewClient(httpClient),
+		Client:  github.NewClient(httpClient),
 		context: ctx,
 	}
 }

@@ -1,21 +1,22 @@
 package downloadrelease
 
 import (
-	"code.cloudfoundry.org/lager"
 	"fmt"
+	"path"
+	"regexp"
+	"strings"
+
+	"code.cloudfoundry.org/lager"
 	"github.com/cf-platform-eng/marman"
 	github2 "github.com/cf-platform-eng/marman/github"
 	"github.com/google/go-github/v25/github"
 	"github.com/pkg/errors"
-	"path"
-	"regexp"
-	"strings"
 )
 
 type Config struct {
 	Owner   string `short:"o" long:"owner" description:"Repository owner" required:"true"`
 	Repo    string `short:"r" long:"repo" description:"Repository name" required:"true"`
-	Version string `short:"v" long:"version" description:"Release version"`
+	Version string `short:"v" long:"version" description:"Release version (default: latest GA)"`
 	Filter  string `short:"f" long:"filter" description:"Filter to specific asset"`
 
 	GithubToken string `long:"github-token" description:"Authentication token for GitHub" env:"GITHUB_TOKEN"`
@@ -40,8 +41,12 @@ func (cmd *Config) DownloadRelease() error {
 	releases, err := cmd.GithubClient.ListReleases(cmd.Owner, cmd.Repo, nil)
 	if err != nil {
 		githubError, ok := err.(*github.ErrorResponse)
-		if ok && cmd.GithubToken == "" && githubError.Message == "Not Found" {
-			return fmt.Errorf("could not find %s/%s. If this repository is private, try again with a GitHub token", cmd.Owner, cmd.Repo)
+		if ok && githubError.Message == "Not Found" {
+			if cmd.GithubToken == "" {
+				return fmt.Errorf("could not find %s/%s. If this repository is private, try again with a GitHub token", cmd.Owner, cmd.Repo)
+			} else {
+				return fmt.Errorf("could not find %s/%s", cmd.Owner, cmd.Repo)
+			}
 		}
 		return errors.Wrapf(err, "failed to get the list of releases for %s/%s", cmd.Owner, cmd.Repo)
 	}
@@ -50,14 +55,14 @@ func (cmd *Config) DownloadRelease() error {
 		return fmt.Errorf("no releases found for %s/%s", cmd.Owner, cmd.Repo)
 	}
 
-	chosenRelease := releases[0]
-	if cmd.Version != "" {
-		chosenRelease = nil
-		for _, release := range releases {
-			if *release.Name == cmd.Version {
-				chosenRelease = release
-				break
-			}
+	var chosenRelease *github.RepositoryRelease
+	for _, release := range releases {
+		if cmd.Version == "" && !*release.Prerelease {
+			chosenRelease = release
+			break
+		} else if cmd.Version == *release.Name {
+			chosenRelease = release
+			break
 		}
 	}
 

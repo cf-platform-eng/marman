@@ -99,6 +99,41 @@ var _ = Describe("FindReleaseByVersionConstraint", func() {
 		})
 	})
 
+	Context("No version finds the latest GA release", func() {
+		BeforeEach(func() {
+			pivnetWrapper.ListReleasesReturns([]actualpivnet.Release{
+				{
+					ID:      100,
+					Version: "1.0.0",
+				}, {
+					ID:      101,
+					Version: "1.0.1",
+				}, {
+					ID:      200,
+					Version: "2.0",
+				}, {
+					ID:      201,
+					Version: "2.0-beta.1",
+				},
+			}, nil)
+		})
+
+		It("returns an error", func() {
+			constraint, err := semver.NewConstraint("X")
+			Expect(err).ToNot(HaveOccurred())
+
+			release, err := client.FindReleaseByVersionConstraint("my-slug", constraint)
+			Expect(err).ToNot(HaveOccurred())
+
+			By("getting the list of releases from pivnet", func() {
+				slug := pivnetWrapper.ListReleasesArgsForCall(0)
+				Expect(slug).To(Equal("my-slug"))
+			})
+
+			Expect(release.ID).To(Equal(200))
+		})
+	})
+
 	Context("Pivnet fails to list releases", func() {
 		BeforeEach(func() {
 			pivnetWrapper.ListReleasesReturns([]actualpivnet.Release{}, errors.New("list releases error"))

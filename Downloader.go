@@ -1,10 +1,11 @@
 package marman
 
 import (
-	"github.com/pkg/errors"
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/pkg/errors"
 )
 
 //go:generate counterfeiter ReadCloser
@@ -19,7 +20,7 @@ type Downloader interface {
 	DownloadFromURL(filename string, url string) error
 }
 
-type MarmanDownloader struct {}
+type MarmanDownloader struct{}
 
 func (d *MarmanDownloader) DownloadFromReader(filename string, closer io.ReadCloser) error {
 	defer closer.Close()

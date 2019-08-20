@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/cf-platform-eng/marman/downloadrelease"
 	"os"
+
+	"github.com/cf-platform-eng/marman/downloadrelease"
 
 	"code.cloudfoundry.org/lager"
 
@@ -30,12 +31,12 @@ func main() {
 		downloadReleaseOpts,
 	)
 	if err != nil {
-		fmt.Println("Could not add download-release command")
+		fmt.Printf("Could not add download-release command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
 	downloadStemcellOpts := &downloadstemcell.Config{
-		Logger: lager.NewLogger("download-stemcell"),
+		Downloader: &downloadtile.Config{},
 	}
 	_, err = parser.AddCommand(
 		"download-stemcell",
@@ -44,7 +45,7 @@ func main() {
 		downloadStemcellOpts,
 	)
 	if err != nil {
-		fmt.Println("Could not add download-stemcell command")
+		fmt.Printf("Could not add download-stemcell command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -59,7 +60,7 @@ func main() {
 		downloadPKSOpts,
 	)
 	if err != nil {
-		fmt.Println("Could not add download-pks command")
+		fmt.Printf("Could not add download-pks command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -74,7 +75,7 @@ func main() {
 		downloadSRTOpts,
 	)
 	if err != nil {
-		fmt.Println("Could not add download-srt command")
+		fmt.Printf("Could not add download-srt command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -89,7 +90,7 @@ func main() {
 		downloadPASOpts,
 	)
 	if err != nil {
-		fmt.Println("Could not add download-pas command")
+		fmt.Printf("Could not add download-pas command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -101,7 +102,7 @@ func main() {
 		downloadTileOpts,
 	)
 	if err != nil {
-		fmt.Println("Could not add download-tile command")
+		fmt.Printf("Could not add download-tile command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -111,7 +112,7 @@ func main() {
 		"print marman version",
 		&version.VersionOpt{})
 	if err != nil {
-		fmt.Println("Could not add version command")
+		fmt.Printf("Could not add version command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
