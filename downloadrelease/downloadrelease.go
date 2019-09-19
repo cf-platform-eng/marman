@@ -99,7 +99,7 @@ func (cmd *Config) DownloadRelease() error {
 		return errors.Wrapf(err, "failed to download release asset %s from %s/%s", *chosenAsset.Name, cmd.Owner, cmd.Repo)
 	}
 
-	fmt.Printf("Downloading %s...\n", filename)
+	fmt.Printf("Downloading %s from %s/%s %s...\n", filename, cmd.Owner, cmd.Repo, *chosenRelease.Name)
 
 	if body == nil && redirectURL != "" {
 		err = cmd.Downloader.DownloadFromURL(filename, redirectURL)

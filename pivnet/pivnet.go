@@ -2,6 +2,7 @@ package pivnet
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -87,6 +88,7 @@ func (c *PivNetClient) DownloadFile(slug string, releaseID int, productFile *piv
 		return Wrapf(err, "failed to load file info: %s", filename)
 	}
 
+	fmt.Printf("Downloading %s from %s...\n", filename, slug)
 	err = c.Wrapper.DownloadProductFile(fileInfo, slug, releaseID, productFile.ID, os.Stdout)
 	if err != nil {
 		return Wrapf(err, "failed to download file: %s", filename)

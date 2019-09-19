@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cf-platform-eng/marman/downloadrelease"
-
 	"code.cloudfoundry.org/lager"
+	"github.com/cf-platform-eng/marman/downloadrelease"
 
 	"github.com/cf-platform-eng/marman"
 
@@ -64,10 +63,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	downloadSRTOpts := &downloadtile.Config{
-		Slug: "cf",
-		File: "srt-(.*)-(.*).pivotal$",
-	}
+	downloadSRTOpts := &marman.DownloadSRTConfig{}
 	_, err = parser.AddCommand(
 		"download-srt",
 		"Download SRT",
@@ -79,10 +75,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	downloadPASOpts := &downloadtile.Config{
-		Slug: "cf",
-		File: "cf-(.*)-(.*).pivotal$",
-	}
+	downloadPASOpts := &marman.DownloadPASConfig{}
 	_, err = parser.AddCommand(
 		"download-pas",
 		"Download PAS",
