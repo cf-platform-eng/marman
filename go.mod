@@ -3,7 +3,7 @@ module github.com/cf-platform-eng/marman
 require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	github.com/Masterminds/semver v1.4.2
-	github.com/google/go-github/v25 v25.0.2
+	github.com/google/go-github/v25 v25.1.3
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.2
