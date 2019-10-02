@@ -7,7 +7,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.2
-	github.com/pivotal-cf/go-pivnet v0.0.52
+	github.com/pivotal-cf/go-pivnet v0.0.53
 	github.com/pkg/errors v0.8.1
 	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09 // indirect
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
