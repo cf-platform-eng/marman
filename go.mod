@@ -5,7 +5,7 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/google/go-github/v25 v25.1.3
 	github.com/jessevdk/go-flags v1.4.0
-	github.com/onsi/ginkgo v1.10.2
+	github.com/onsi/ginkgo v1.10.3
 	github.com/onsi/gomega v1.7.0
 	github.com/pivotal-cf/go-pivnet v0.0.53
 	github.com/pkg/errors v0.8.1
