@@ -6,7 +6,7 @@ require (
 	github.com/google/go-github/v25 v25.1.3
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/onsi/ginkgo v1.11.0
-	github.com/onsi/gomega v1.8.0
+	github.com/onsi/gomega v1.8.1
 	github.com/pivotal-cf/go-pivnet v0.0.53
 	github.com/pkg/errors v0.8.1
 	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09 // indirect
