@@ -8,7 +8,7 @@ require (
 	github.com/onsi/ginkgo v1.11.0
 	github.com/onsi/gomega v1.8.1
 	github.com/pivotal-cf/go-pivnet v0.0.53
-	github.com/pkg/errors v0.8.1
+	github.com/pkg/errors v0.9.0
 	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09 // indirect
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect

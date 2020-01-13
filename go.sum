@@ -41,6 +41,8 @@ github.com/pivotal-cf/go-pivnet v0.0.53 h1:m2hFasKAI66MGKQzCGUP7oaG7xFClni2ruxmM
 github.com/pivotal-cf/go-pivnet v0.0.53/go.mod h1:rvEzWli4NJQhX7Z3z0DiEQXsPwC+uE//eIKcpl7S1as=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/pkg/errors v0.9.0 h1:J8lpUdobwIeCI7OiSxHqEwJUKvJwicL5+3v1oe2Yb4k=
+github.com/pkg/errors v0.9.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/robdimsdale/sanitizer v0.0.0-20160522134901-ab2334cb7539/go.mod h1:tqCODtkKV+9Tfvt9JURvKCTxJ69bA/OU/QhsaQLK/rc=
 github.com/shirou/gopsutil v0.0.0-20180927124308-a11c78ba2c13 h1:hzFIj+Ky1KX599VGAVY//20nam1rYKwQwNVix1sYhXo=
 github.com/shirou/gopsutil v0.0.0-20180927124308-a11c78ba2c13/go.mod h1:5b4v6he4MtMOwMlS0TUMTu2PcXUg8+E1lC7eC3UO/RA=
