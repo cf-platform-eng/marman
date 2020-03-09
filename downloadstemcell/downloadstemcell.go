@@ -3,6 +3,8 @@ package downloadstemcell
 import (
 	"errors"
 	"fmt"
+
+	"github.com/cf-platform-eng/marman/downloadtile"
 )
 
 type Config struct {
@@ -31,10 +33,22 @@ func stemcellOSToSlug(os string) (string, error) {
 	return "", fmt.Errorf("invalid stemcell os: %s", os)
 }
 
+func stemcellFileFilter(version, iaas string, light bool) string {
+	if light {
+		return fmt.Sprintf("light-bosh-stemcell-%s-%s-.*\\.tgz$", version, iaas)
+	}
+	return fmt.Sprintf("bosh-stemcell-%s-%s-.*\\.tgz$", version, iaas)
+}
+
 func (cmd *Config) Execute(args []string) error {
 	slug, err := stemcellOSToSlug(cmd.OS)
 	if err != nil {
 		return err
 	}
-	return cmd.Downloader.DownloadFromPivnet(slug, cmd.IAAS, cmd.Version, cmd.PivnetToken)
+
+	err = cmd.Downloader.DownloadFromPivnet(slug, stemcellFileFilter(cmd.Version, cmd.IAAS, false), cmd.Version, cmd.PivnetToken)
+	if errors.As(err, &downloadtile.TooManyFilesError{}) {
+		err = cmd.Downloader.DownloadFromPivnet(slug, stemcellFileFilter(cmd.Version, cmd.IAAS, true), cmd.Version, cmd.PivnetToken)
+	}
+	return err
 }

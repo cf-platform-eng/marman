@@ -90,7 +90,42 @@ var _ = Describe("Download Tile", func() {
 			cmd.File = "download-link"
 			err := cmd.DownloadTile()
 			Expect(err).To(HaveOccurred())
+			Expect(err).To(MatchError(downloadtile.TooManyFilesError{
+				Filter: "download-link",
+				Files: []pivnet.ProductFile{
+					{
+						ID:           123,
+						Name:         "Small Footprint PAS",
+						AWSObjectKey: "srt-download-link",
+						Links: &pivnet.Links{
+							Download: map[string]string{
+								"href": "srt-download-link",
+							},
+						},
+					},
+					{
+						ID:           456,
+						Name:         "Pivotal Application Service",
+						AWSObjectKey: "pas-download-link",
+						Links: &pivnet.Links{
+							Download: map[string]string{
+								"href": "pas-download-link",
+							},
+						},
+					},
+				},
+			}))
 			Expect(err.Error()).To(Equal("too many matching files found with the given file filter \"download-link\"\n    srt-download-link\n    pas-download-link"))
+		})
+	})
+
+	Context("no matching files", func() {
+		It("returns an error", func() {
+			cmd.File = "will-not-match"
+			err := cmd.DownloadTile()
+			Expect(err).To(HaveOccurred())
+			Expect(err).To(MatchError(downloadtile.NoMatchError{Filter: "will-not-match"}))
+			Expect(err.Error()).To(Equal("unable to find the file using the filter \"will-not-match\""))
 		})
 	})
 

@@ -20,6 +20,23 @@ type Config struct {
 	PivnetToken  string `long:"pivnet-token" description:"Authentication token for PivNet" env:"PIVNET_TOKEN"`
 }
 
+type TooManyFilesError struct {
+	Filter string
+	Files  []pivnet.ProductFile
+}
+
+func (f TooManyFilesError) Error() string {
+	return fmt.Sprintf("too many matching files found with the given file filter \"%s\"%s", f.Filter, filesToString(f.Files, f.Filter))
+}
+
+type NoMatchError struct {
+	Filter string
+}
+
+func (f NoMatchError) Error() string {
+	return fmt.Sprintf("unable to find the file using the filter \"%s\"", f.Filter)
+}
+
 func filesToString(files []pivnet.ProductFile, filter string) string {
 	builder := strings.Builder{}
 	for _, file := range files {
@@ -44,13 +61,13 @@ func (cmd *Config) FindFile(productFiles []pivnet.ProductFile, id int) (*pivnet.
 			if productFile.ID == 0 {
 				productFile = fileUnderConsideration
 			} else {
-				err = fmt.Errorf("too many matching files found with the given file filter \"%s\"%s", cmd.File, filesToString(productFiles, cmd.File))
+				err = TooManyFilesError{cmd.File, productFiles}
 			}
 		}
 	}
 
 	if productFile.ID == 0 {
-		err = errors.Errorf("unable to find the tile with name %s", cmd.File)
+		err = NoMatchError{Filter: cmd.File}
 	}
 
 	return &productFile, err
