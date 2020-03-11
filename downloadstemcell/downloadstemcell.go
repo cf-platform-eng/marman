@@ -35,9 +35,9 @@ func stemcellOSToSlug(os string) (string, error) {
 
 func stemcellFileFilter(version, iaas string, light bool) string {
 	if light {
-		return fmt.Sprintf("light-bosh-stemcell-%s-%s-.*\\.tgz$", version, iaas)
+		return fmt.Sprintf("light-bosh-stemcell-%s[\\d.]*-%s-.*\\.tgz$", version, iaas)
 	}
-	return fmt.Sprintf("bosh-stemcell-%s-%s-.*\\.tgz$", version, iaas)
+	return fmt.Sprintf("bosh-stemcell-%s[\\d.]*-%s-.*\\.tgz$", version, iaas)
 }
 
 func (cmd *Config) Execute(args []string) error {

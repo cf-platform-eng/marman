@@ -25,7 +25,7 @@ var _ = Describe("Download Stemcell", func() {
 
 	It("downloads the file", func() {
 		cmd.OS = "ubuntu-xenial"
-		cmd.Version = "123.4"
+		cmd.Version = "123"
 		cmd.IAAS = "google"
 		cmd.PivnetToken = "secret-token"
 
@@ -34,8 +34,8 @@ var _ = Describe("Download Stemcell", func() {
 		Expect(downloader.DownloadFromPivnetCallCount()).To(Equal(1))
 		slug, file, version, pivnetToken := downloader.DownloadFromPivnetArgsForCall(0)
 		Expect(slug).To(Equal("stemcells-ubuntu-xenial"))
-		Expect(file).To(Equal("bosh-stemcell-123.4-google-.*\\.tgz$"))
-		Expect(version).To(Equal("123.4"))
+		Expect(file).To(Equal("bosh-stemcell-123[\\d.]*-google-.*\\.tgz$"))
+		Expect(version).To(Equal("123"))
 		Expect(pivnetToken).To(Equal("secret-token"))
 	})
 
@@ -59,12 +59,12 @@ var _ = Describe("Download Stemcell", func() {
 
 				By("trying with a filter that matches too many files", func() {
 					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(0)
-					Expect(file).To(Equal("bosh-stemcell-123.4-google-.*\\.tgz$"))
+					Expect(file).To(Equal("bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 
 				By("trying the light version", func() {
 					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(1)
-					Expect(file).To(Equal("light-bosh-stemcell-123.4-google-.*\\.tgz$"))
+					Expect(file).To(Equal("light-bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 			})
 		})
@@ -83,12 +83,12 @@ var _ = Describe("Download Stemcell", func() {
 
 				By("trying with a filter that matches too many files", func() {
 					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(0)
-					Expect(file).To(Equal("bosh-stemcell-123.4-google-.*\\.tgz$"))
+					Expect(file).To(Equal("bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 
 				By("trying the light version", func() {
 					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(1)
-					Expect(file).To(Equal("light-bosh-stemcell-123.4-google-.*\\.tgz$"))
+					Expect(file).To(Equal("light-bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 			})
 
