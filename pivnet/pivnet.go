@@ -29,7 +29,7 @@ type PivNetClient struct {
 	Wrapper Wrapper
 }
 
-func NewPivNetClient(token string) *PivNetClient {
+func NewPivNetClient(host string, token string) *PivNetClient {
 	// Why can't I use lager.NewLogger here?
 	stdoutLogger := log.New(os.Stdout, "", log.LstdFlags)
 	stderrLogger := log.New(os.Stderr, "", log.LstdFlags)
@@ -38,7 +38,7 @@ func NewPivNetClient(token string) *PivNetClient {
 	return &PivNetClient{
 		Wrapper: &ClientWrapper{
 			pivnet.NewClient(pivnet.ClientConfig{
-				Host:  pivnet.DefaultHost,
+				Host:  host,
 				Token: token,
 			}, pivnetLogger),
 		},

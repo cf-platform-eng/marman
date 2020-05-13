@@ -8,13 +8,14 @@ import (
 )
 
 type FakeDownloader struct {
-	DownloadFromPivnetStub        func(string, string, string, string) error
+	DownloadFromPivnetStub        func(string, string, string, string, string) error
 	downloadFromPivnetMutex       sync.RWMutex
 	downloadFromPivnetArgsForCall []struct {
 		arg1 string
 		arg2 string
 		arg3 string
 		arg4 string
+		arg5 string
 	}
 	downloadFromPivnetReturns struct {
 		result1 error
@@ -26,7 +27,7 @@ type FakeDownloader struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeDownloader) DownloadFromPivnet(arg1 string, arg2 string, arg3 string, arg4 string) error {
+func (fake *FakeDownloader) DownloadFromPivnet(arg1 string, arg2 string, arg3 string, arg4 string, arg5 string) error {
 	fake.downloadFromPivnetMutex.Lock()
 	ret, specificReturn := fake.downloadFromPivnetReturnsOnCall[len(fake.downloadFromPivnetArgsForCall)]
 	fake.downloadFromPivnetArgsForCall = append(fake.downloadFromPivnetArgsForCall, struct {
@@ -34,11 +35,12 @@ func (fake *FakeDownloader) DownloadFromPivnet(arg1 string, arg2 string, arg3 st
 		arg2 string
 		arg3 string
 		arg4 string
-	}{arg1, arg2, arg3, arg4})
-	fake.recordInvocation("DownloadFromPivnet", []interface{}{arg1, arg2, arg3, arg4})
+		arg5 string
+	}{arg1, arg2, arg3, arg4, arg5})
+	fake.recordInvocation("DownloadFromPivnet", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.downloadFromPivnetMutex.Unlock()
 	if fake.DownloadFromPivnetStub != nil {
-		return fake.DownloadFromPivnetStub(arg1, arg2, arg3, arg4)
+		return fake.DownloadFromPivnetStub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1
@@ -53,17 +55,17 @@ func (fake *FakeDownloader) DownloadFromPivnetCallCount() int {
 	return len(fake.downloadFromPivnetArgsForCall)
 }
 
-func (fake *FakeDownloader) DownloadFromPivnetCalls(stub func(string, string, string, string) error) {
+func (fake *FakeDownloader) DownloadFromPivnetCalls(stub func(string, string, string, string, string) error) {
 	fake.downloadFromPivnetMutex.Lock()
 	defer fake.downloadFromPivnetMutex.Unlock()
 	fake.DownloadFromPivnetStub = stub
 }
 
-func (fake *FakeDownloader) DownloadFromPivnetArgsForCall(i int) (string, string, string, string) {
+func (fake *FakeDownloader) DownloadFromPivnetArgsForCall(i int) (string, string, string, string, string) {
 	fake.downloadFromPivnetMutex.RLock()
 	defer fake.downloadFromPivnetMutex.RUnlock()
 	argsForCall := fake.downloadFromPivnetArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
 func (fake *FakeDownloader) DownloadFromPivnetReturns(result1 error) {

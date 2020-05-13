@@ -28,15 +28,17 @@ var _ = Describe("Download Stemcell", func() {
 		cmd.Version = "123"
 		cmd.IAAS = "google"
 		cmd.PivnetToken = "secret-token"
+		cmd.TanzuNetHost = "https://network.tanzu.vmware.com"
 
 		err := cmd.Execute([]string{})
 		Expect(err).ToNot(HaveOccurred())
 		Expect(downloader.DownloadFromPivnetCallCount()).To(Equal(1))
-		slug, file, version, pivnetToken := downloader.DownloadFromPivnetArgsForCall(0)
+		slug, file, version, tanzuNetHost, pivnetToken := downloader.DownloadFromPivnetArgsForCall(0)
 		Expect(slug).To(Equal("stemcells-ubuntu-xenial"))
 		Expect(file).To(Equal("bosh-stemcell-123[\\d.]*-google-.*\\.tgz$"))
 		Expect(version).To(Equal("123"))
 		Expect(pivnetToken).To(Equal("secret-token"))
+		Expect(tanzuNetHost).To(Equal("https://network.tanzu.vmware.com"))
 	})
 
 	Context("results include both a lite and a heavy stemcell", func() {
@@ -58,12 +60,12 @@ var _ = Describe("Download Stemcell", func() {
 				})
 
 				By("trying with a filter that matches too many files", func() {
-					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(0)
+					_, file, _, _, _ := downloader.DownloadFromPivnetArgsForCall(0)
 					Expect(file).To(Equal("bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 
 				By("trying the light version", func() {
-					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(1)
+					_, file, _, _, _ := downloader.DownloadFromPivnetArgsForCall(1)
 					Expect(file).To(Equal("light-bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 			})
@@ -82,12 +84,12 @@ var _ = Describe("Download Stemcell", func() {
 				})
 
 				By("trying with a filter that matches too many files", func() {
-					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(0)
+					_, file, _, _, _ := downloader.DownloadFromPivnetArgsForCall(0)
 					Expect(file).To(Equal("bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 
 				By("trying the light version", func() {
-					_, file, _, _ := downloader.DownloadFromPivnetArgsForCall(1)
+					_, file, _, _, _ := downloader.DownloadFromPivnetArgsForCall(1)
 					Expect(file).To(Equal("light-bosh-stemcell-123.4[\\d.]*-google-.*\\.tgz$"))
 				})
 			})

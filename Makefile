@@ -55,8 +55,13 @@ build/marman-darwin: $(SRC) deps
 build-image: build/marman-linux
 	docker build --tag cfplatformeng/marman:${VERSION} --file Dockerfile .
 
-test: deps lint
-	ginkgo -r .
+test-units: deps lint
+	ginkgo -r -skipPackage features .
+
+test-features: deps
+	ginkgo -r -tags=feature features
+
+test: test-units test-features
 
 lint: deps-goimports
 	git ls-files | grep '.go$$' | xargs goimports -l -w

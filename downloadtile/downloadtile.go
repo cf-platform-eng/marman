@@ -18,6 +18,7 @@ type Config struct {
 	Version      string `short:"v" long:"version" default:"X" default-mask:"latest GA" description:"Semver constraint for picking a release version"`
 	PivnetClient pivnetClient.Client
 	PivnetToken  string `long:"pivnet-token" description:"Authentication token for PivNet" env:"PIVNET_TOKEN"`
+	TanzuNetHost string `long:"pivnet-host" description:"Host for Tanzu Network" env:"TANZU_NETWORK_HOSTNAME" default:"https://network.pivotal.io"`
 }
 
 type TooManyFilesError struct {
@@ -49,7 +50,7 @@ func filesToString(files []pivnet.ProductFile, filter string) string {
 
 }
 
-func (cmd *Config) FindFile(productFiles []pivnet.ProductFile, id int) (*pivnet.ProductFile, error) {
+func (cmd *Config) FindFile(productFiles []pivnet.ProductFile) (*pivnet.ProductFile, error) {
 	var (
 		err         error
 		productFile pivnet.ProductFile
@@ -89,7 +90,7 @@ func (cmd *Config) DownloadTile() error {
 		return errors.Wrapf(err, "could not list files for release %d on slug %s", release.ID, cmd.Slug)
 	}
 
-	productFile, err := cmd.FindFile(productFiles, release.ID)
+	productFile, err := cmd.FindFile(productFiles)
 	if err != nil {
 		return err
 	}
@@ -104,15 +105,15 @@ func (cmd *Config) DownloadTile() error {
 	return err
 }
 
-func (cmd *Config) DownloadFromPivnet(slug, file, version, pivnetToken string) error {
+func (cmd *Config) DownloadFromPivnet(slug, file, version, pivnetHost, pivnetToken string) error {
 	cmd.Slug = slug
 	cmd.File = file
 	cmd.Version = version
-	cmd.PivnetClient = pivnetClient.NewPivNetClient(pivnetToken)
+	cmd.PivnetClient = pivnetClient.NewPivNetClient(pivnetHost, pivnetToken)
 	return cmd.DownloadTile()
 }
 
 func (cmd *Config) Execute(args []string) error {
-	cmd.PivnetClient = pivnetClient.NewPivNetClient(cmd.PivnetToken)
+	cmd.PivnetClient = pivnetClient.NewPivNetClient(cmd.TanzuNetHost, cmd.PivnetToken)
 	return cmd.DownloadTile()
 }
