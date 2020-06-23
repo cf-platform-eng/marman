@@ -4,6 +4,9 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"net/url"
+
+	"github.com/pkg/errors"
 
 	"github.com/google/go-github/v25/github"
 	"golang.org/x/oauth2"
@@ -20,10 +23,14 @@ type GitHubClient struct {
 	context context.Context
 }
 
-func NewGitHubClient(token string) *GitHubClient {
+func NewGitHubClient(token, gitHubBaseURL string) (*GitHubClient, error) {
 	ctx := context.Background()
+	var (
+		httpClient   *http.Client
+		gitHubClient *github.Client
+		err          error
+	)
 
-	var httpClient *http.Client
 	if token != "" {
 		ts := oauth2.StaticTokenSource(
 			&oauth2.Token{AccessToken: token},
@@ -31,10 +38,16 @@ func NewGitHubClient(token string) *GitHubClient {
 		httpClient = oauth2.NewClient(ctx, ts)
 	}
 
-	return &GitHubClient{
-		Client:  github.NewClient(httpClient),
-		context: ctx,
+	gitHubClient = github.NewClient(httpClient)
+	gitHubClient.BaseURL, err = url.Parse(gitHubBaseURL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to parse Github BaseURL %s", gitHubBaseURL)
 	}
+
+	return &GitHubClient{
+		Client:  gitHubClient,
+		context: ctx,
+	}, nil
 }
 
 func (c *GitHubClient) ListReleases(owner, repo string, opt *github.ListOptions) ([]*github.RepositoryRelease, error) {

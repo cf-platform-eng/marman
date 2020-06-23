@@ -22,12 +22,12 @@ var _ = Describe("Downloading stemcells", func() {
 	Scenario("downloading stemcells", func() {
 		steps.Given("marman is built")
 		steps.And("Tanzu Network is running")
-		steps.And("there is a stemcell")
+		steps.And("there is a simple release")
 
-		steps.When("marman download-stemcell -o ubuntu-xenial -i google -v 123 is run")
+		steps.When("marman download-stemcell -o ubuntu-xenial -i google -v 100 is run")
 
 		steps.Then("it exits without error")
-		steps.And("the stemcell is downloaded")
+		steps.And("the 100.000 release is downloaded")
 	})
 
 	Scenario("download the light stemcell, if there is an option", func() {
@@ -100,7 +100,8 @@ var _ = Describe("Downloading stemcells", func() {
 				ID:      12345,
 				Version: "123",
 			})
-			tanzuNetwork.ProductFiles = append(tanzuNetwork.ProductFiles, pivnet.ProductFile{
+
+			stemcell := pivnet.ProductFile{
 				ID:           6789,
 				AWSObjectKey: "/path/to/bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
 				Links: &pivnet.Links{
@@ -108,7 +109,13 @@ var _ = Describe("Downloading stemcells", func() {
 						"href": "/path/to/bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
 					},
 				},
-			})
+			}
+
+			if tanzuNetwork.ReleaseFiles == nil {
+				tanzuNetwork.ReleaseFiles = map[string][]pivnet.ProductFile{}
+			}
+
+			tanzuNetwork.ReleaseFiles["12345"] = []pivnet.ProductFile{stemcell}
 		})
 
 		define.Given(`^there is both a light and a heavy stemcell$`, func() {
@@ -116,7 +123,8 @@ var _ = Describe("Downloading stemcells", func() {
 				ID:      12345,
 				Version: "123",
 			})
-			tanzuNetwork.ProductFiles = append(tanzuNetwork.ProductFiles, pivnet.ProductFile{
+
+			heavy123 := pivnet.ProductFile{
 				ID:           6789,
 				AWSObjectKey: "/path/to/bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
 				Links: &pivnet.Links{
@@ -124,8 +132,9 @@ var _ = Describe("Downloading stemcells", func() {
 						"href": "/path/to/bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
 					},
 				},
-			})
-			tanzuNetwork.ProductFiles = append(tanzuNetwork.ProductFiles, pivnet.ProductFile{
+			}
+
+			light123 := pivnet.ProductFile{
 				ID:           7890,
 				AWSObjectKey: "/path/to/light-bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
 				Links: &pivnet.Links{
@@ -133,7 +142,69 @@ var _ = Describe("Downloading stemcells", func() {
 						"href": "/path/to/light-bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
 					},
 				},
+			}
+
+			if tanzuNetwork.ReleaseFiles == nil {
+				tanzuNetwork.ReleaseFiles = map[string][]pivnet.ProductFile{}
+			}
+
+			tanzuNetwork.ReleaseFiles["12345"] = []pivnet.ProductFile{heavy123, light123}
+		})
+
+		define.Given(`^there is a simple release$`, func() {
+			tanzuNetwork.Releases = append(tanzuNetwork.Releases, pivnet.Release{
+				ID:      11111,
+				Version: "100",
 			})
+
+			google100 := pivnet.ProductFile{
+				ID:           6789,
+				AWSObjectKey: "/path/to/bosh-stemcell-100.000-google-super-duper-stemcell.tgz",
+				Links: &pivnet.Links{
+					Download: map[string]string{
+						"href": "/path/to/bosh-stemcell-100.000-google-super-duper-stemcell.tgz",
+					},
+				},
+			}
+
+			if tanzuNetwork.ReleaseFiles == nil {
+				tanzuNetwork.ReleaseFiles = map[string][]pivnet.ProductFile{}
+			}
+
+			tanzuNetwork.ReleaseFiles["11111"] = []pivnet.ProductFile{google100}
+		})
+
+		define.Given(`^there is a compound release$`, func() {
+			tanzuNetwork.Releases = append(tanzuNetwork.Releases, pivnet.Release{
+				ID:      12345,
+				Version: "123",
+			})
+
+			vsphere123 := pivnet.ProductFile{
+				ID:           6790,
+				AWSObjectKey: "/path/to/bosh-stemcell-123.456-vsphere-super-duper-stemcell.tgz",
+				Links: &pivnet.Links{
+					Download: map[string]string{
+						"href": "/path/to/bosh-stemcell-123.456-vsphere-super-duper-stemcell.tgz",
+					},
+				},
+			}
+
+			google123 := pivnet.ProductFile{
+				ID:           6791,
+				AWSObjectKey: "/path/to/bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
+				Links: &pivnet.Links{
+					Download: map[string]string{
+						"href": "/path/to/bosh-stemcell-123.456-google-super-duper-stemcell.tgz",
+					},
+				},
+			}
+
+			if tanzuNetwork.ReleaseFiles == nil {
+				tanzuNetwork.ReleaseFiles = map[string][]pivnet.ProductFile{}
+			}
+
+			tanzuNetwork.ReleaseFiles["12345"] = []pivnet.ProductFile{vsphere123, google123}
 		})
 
 		define.When(`^marman download-stemcell -o ubuntu-xenial -i google is run$`, func() {
@@ -147,8 +218,8 @@ var _ = Describe("Downloading stemcells", func() {
 			Expect(err).NotTo(HaveOccurred())
 		})
 
-		define.When(`^marman download-stemcell -o ubuntu-xenial -i google -v 123 is run$`, func() {
-			command := exec.Command(marmanPath, "download-stemcell", "-o", "ubuntu-xenial", "-i", "google", "-v", "123")
+		define.When(`^marman download-stemcell -o ubuntu-xenial -i google -v ([0-9\.]+) is run$`, func(version string) {
+			command := exec.Command(marmanPath, "download-stemcell", "-o", "ubuntu-xenial", "-i", "google", "-v", version)
 			command.Env = []string{
 				fmt.Sprintf("TANZU_NETWORK_HOSTNAME=%s", tanzuNetwork.Host),
 			}
@@ -173,10 +244,24 @@ var _ = Describe("Downloading stemcells", func() {
 			info, err := os.Stat(expectedStemcellFilePath)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(info.IsDir()).To(BeFalse())
-		}, func() {
-			err := os.Remove(expectedStemcellFilePath)
+
+			err = os.Remove(expectedStemcellFilePath)
 			Expect(err).NotTo(HaveOccurred())
 			expectedStemcellFilePath = ""
+		})
+
+		define.Then(`^the ([0-9\.]+) release is downloaded$`, func(version string) {
+			cwd, err := os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+			expectedReleasePath := path.Join(cwd, fmt.Sprintf("bosh-stemcell-%s-google-super-duper-stemcell.tgz", version))
+
+			info, err := os.Stat(expectedReleasePath)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(info.IsDir()).To(BeFalse())
+
+			err = os.Remove(expectedReleasePath)
+			Expect(err).NotTo(HaveOccurred())
+			expectedReleasePath = ""
 		})
 
 		define.Then(`^the light stemcell is downloaded$`, func() {

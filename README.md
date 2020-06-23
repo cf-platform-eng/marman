@@ -7,4 +7,4 @@ Currently, it supports downloading files from the [Pivotal Network](https://netw
 ## Commands
 
 * `marman download-tile` - Downloads a file off of pivnet. Requires a PIVNET_TOKEN (refresh or legacy).
-* `marman download-release` - Downloads a file from a GitHub release. May require a GITHUB_TOKEN.
+* `marman github-download-release` - Downloads a file from a GitHub release. May require a GITHUB_TOKEN.

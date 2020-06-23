@@ -33,7 +33,7 @@ func NewPivNetClient(host string, token string) *PivNetClient {
 	// Why can't I use lager.NewLogger here?
 	stdoutLogger := log.New(os.Stdout, "", log.LstdFlags)
 	stderrLogger := log.New(os.Stderr, "", log.LstdFlags)
-	pivnetLogger := logshim.NewLogShim(stdoutLogger, stderrLogger, false)
+	pivnetLogger := logshim.NewLogShim(stdoutLogger, stderrLogger, false) // <-- setting verbose: true is useful when debugging tanzu network issues
 
 	return &PivNetClient{
 		Wrapper: &ClientWrapper{

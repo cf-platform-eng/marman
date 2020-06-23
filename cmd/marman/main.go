@@ -21,16 +21,16 @@ var parser = flags.NewParser(&config, flags.Default)
 
 func main() {
 	downloadReleaseOpts := &downloadrelease.Config{
-		Logger: lager.NewLogger("download-release"),
+		Logger: lager.NewLogger("github-download-release"),
 	}
 	_, err := parser.AddCommand(
-		"download-release",
+		"github-download-release",
 		"Download release",
 		"Download release from GitHub",
 		downloadReleaseOpts,
 	)
 	if err != nil {
-		fmt.Printf("Could not add download-release command: %s\n", err.Error())
+		fmt.Printf("Could not add github-download-release command: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -87,15 +87,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	downloadTileOpts := &downloadtile.Config{}
+	downloadTanzuNetworkReleaseOpts := &downloadtile.Config{}
 	_, err = parser.AddCommand(
-		"download-tile",
-		"Download tile",
-		"Download tile from PivNet",
-		downloadTileOpts,
+		"tanzu-network-download",
+		"Download release",
+		"Download release from Tanzu Network",
+		downloadTanzuNetworkReleaseOpts,
 	)
 	if err != nil {
-		fmt.Printf("Could not add download-tile command: %s\n", err.Error())
+		fmt.Printf("Could not add tanzu-network-download command: %s\n", err.Error())
 		os.Exit(1)
 	}
 

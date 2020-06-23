@@ -19,7 +19,8 @@ type Config struct {
 	Version string `short:"v" long:"version" description:"Release version (default: latest GA)"`
 	Filter  string `short:"f" long:"filter" description:"Filter to specific asset"`
 
-	GithubToken string `long:"github-token" description:"Authentication token for GitHub" env:"GITHUB_TOKEN"`
+	GithubToken   string `long:"github-token" description:"Authentication token for GitHub" env:"GITHUB_TOKEN"`
+	GithubNetHost string `long:"github-host" description:"Base URL host for Github, (e.g. https://enterprise.example.com:8443/)" env:"GITHUB_NETWORK_HOSTNAME" default:"https://github.com"`
 
 	Logger       lager.Logger
 	GithubClient github2.Client
@@ -114,6 +115,6 @@ func (cmd *Config) DownloadRelease() error {
 
 func (cmd *Config) Execute(args []string) error {
 	cmd.Downloader = &marman.MarmanDownloader{}
-	cmd.GithubClient = github2.NewGitHubClient(cmd.GithubToken)
+	cmd.GithubClient, _ = github2.NewGitHubClient(cmd.GithubToken, cmd.GithubNetHost)
 	return cmd.DownloadRelease()
 }
