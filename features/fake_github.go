@@ -139,7 +139,7 @@ func NewFakeGitHub() *FakeGitHub {
 		}
 	})
 
-	fake.Host = "http://localhost:9877"
+	fake.Host = "http://localhost:9877/"
 	fake.Server = http_server.New("localhost:9877", mux)
 
 	return fake

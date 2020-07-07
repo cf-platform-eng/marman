@@ -58,7 +58,7 @@ var _ = Describe("Downloading releases from GitHub", func() {
 		define.When("^marman github-download-release -o cf-platform-eng -r needs -f linux is run$", func() {
 			command := exec.Command(marmanPath, "github-download-release", "-o", "cf-platform-eng", "-r", "needs", "-f", "linux")
 			command.Env = []string{
-				fmt.Sprintf("GITHUB_NETWORK_HOSTNAME=%s/", gitHub.Host),
+				fmt.Sprintf("GITHUB_NETWORK_HOSTNAME=%s", gitHub.Host),
 			}
 
 			var err error
@@ -69,7 +69,7 @@ var _ = Describe("Downloading releases from GitHub", func() {
 		define.When("^marman github-download-release -o cf-platform-eng -r needs -v 1.2.3 -f linux is run$", func() {
 			command := exec.Command(marmanPath, "github-download-release", "-o", "cf-platform-eng", "-r", "needs", "-v", "1.2.3", "-f", "linux")
 			command.Env = []string{
-				fmt.Sprintf("GITHUB_NETWORK_HOSTNAME=%s/", gitHub.Host),
+				fmt.Sprintf("GITHUB_NETWORK_HOSTNAME=%s", gitHub.Host),
 			}
 
 			var err error
