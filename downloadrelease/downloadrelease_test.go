@@ -79,7 +79,7 @@ var _ = Describe("DownloadRelease", func() {
 					makeAsset(3456, "asset-0.8.linux"),
 					makeAsset(3789, "asset-0.8.macosx"),
 				),
-			}, nil)
+			}, &github.Response{}, nil)
 			githubClient.DownloadReleaseAssetReturns(nil, "download-url", nil)
 		})
 
@@ -97,7 +97,7 @@ var _ = Describe("DownloadRelease", func() {
 					owner, repo, opt := githubClient.ListReleasesArgsForCall(0)
 					Expect(owner).To(Equal("petewall"))
 					Expect(repo).To(Equal("myrepo"))
-					Expect(opt).To(BeNil())
+					Expect(opt.Page).To(Equal(1))
 				})
 
 				By("getting the download url for the release asset", func() {
@@ -131,7 +131,7 @@ var _ = Describe("DownloadRelease", func() {
 					owner, repo, opt := githubClient.ListReleasesArgsForCall(0)
 					Expect(owner).To(Equal("petewall"))
 					Expect(repo).To(Equal("myrepo"))
-					Expect(opt).To(BeNil())
+					Expect(opt.Page).To(Equal(1))
 				})
 
 				By("getting the download url for the release asset", func() {
@@ -150,12 +150,81 @@ var _ = Describe("DownloadRelease", func() {
 				})
 			})
 		})
+	})
 
+	Context("the desired release is not on the first page", func() {
+		BeforeEach(func() {
+			githubClient.ListReleasesReturnsOnCall(0, []*github.RepositoryRelease{
+				makeRelease(0, "1.0-beta.1", true,
+					makeAsset(11231, "asset-1.0-beta.1.windows"),
+					makeAsset(14561, "asset-1.0-beta.1.linux"),
+					makeAsset(17891, "asset-1.0-beta.1.macosx"),
+				),
+				makeRelease(1, "1.0", false,
+					makeAsset(1123, "asset-1.0.windows"),
+					makeAsset(1456, "asset-1.0.linux"),
+					makeAsset(1789, "asset-1.0.macosx"),
+				),
+			}, &github.Response{
+				NextPage: 2,
+				LastPage: 2,
+			}, nil)
+			githubClient.ListReleasesReturnsOnCall(1, []*github.RepositoryRelease{
+				makeRelease(2, "0.9", false,
+					makeAsset(2123, "asset-0.9.windows"),
+					makeAsset(2456, "asset-0.9.linux"),
+					makeAsset(2789, "asset-0.9.macosx"),
+				),
+				makeRelease(3, "0.8", false,
+					makeAsset(3123, "asset-0.8.windows"),
+					makeAsset(3456, "asset-0.8.linux"),
+					makeAsset(3789, "asset-0.8.macosx"),
+				),
+			}, &github.Response{
+				FirstPage: 1,
+				PrevPage:  1,
+			}, nil)
+			githubClient.DownloadReleaseAssetReturns(nil, "download-url", nil)
+		})
+
+		It("requests the next page and downloads the file", func() {
+			cmd.Version = "0.9"
+			err := cmd.DownloadRelease()
+			Expect(err).ToNot(HaveOccurred())
+
+			By("getting both pages of releases", func() {
+				Expect(githubClient.ListReleasesCallCount()).To(Equal(2))
+				owner, repo, opt := githubClient.ListReleasesArgsForCall(0)
+				Expect(owner).To(Equal("petewall"))
+				Expect(repo).To(Equal("myrepo"))
+				Expect(opt.Page).To(Equal(1))
+
+				owner, repo, opt = githubClient.ListReleasesArgsForCall(1)
+				Expect(owner).To(Equal("petewall"))
+				Expect(repo).To(Equal("myrepo"))
+				Expect(opt.Page).To(Equal(2))
+			})
+
+			By("getting the download url for the release asset", func() {
+				Expect(githubClient.DownloadReleaseAssetCallCount()).To(Equal(1))
+				owner, repo, assetId := githubClient.DownloadReleaseAssetArgsForCall(0)
+				Expect(owner).To(Equal("petewall"))
+				Expect(repo).To(Equal("myrepo"))
+				Expect(assetId).To(Equal(int64(2456)))
+			})
+
+			By("downloading the asset", func() {
+				Expect(downloader.DownloadFromURLCallCount()).To(Equal(1))
+				filename, url := downloader.DownloadFromURLArgsForCall(0)
+				Expect(filename).To(Equal("asset-0.9.linux"))
+				Expect(url).To(Equal("download-url"))
+			})
+		})
 	})
 
 	Context("could not find the list of releases", func() {
 		BeforeEach(func() {
-			githubClient.ListReleasesReturns([]*github.RepositoryRelease{}, &github.ErrorResponse{
+			githubClient.ListReleasesReturns([]*github.RepositoryRelease{}, &github.Response{}, &github.ErrorResponse{
 				Message: "Not Found",
 			})
 		})
@@ -169,7 +238,7 @@ var _ = Describe("DownloadRelease", func() {
 
 	Context("failed to get the list of releases", func() {
 		BeforeEach(func() {
-			githubClient.ListReleasesReturns([]*github.RepositoryRelease{}, errors.New("list releases error"))
+			githubClient.ListReleasesReturns([]*github.RepositoryRelease{}, &github.Response{}, errors.New("list releases error"))
 		})
 
 		It("returns an error", func() {
@@ -181,7 +250,7 @@ var _ = Describe("DownloadRelease", func() {
 
 	Context("no releases found", func() {
 		BeforeEach(func() {
-			githubClient.ListReleasesReturns([]*github.RepositoryRelease{}, nil)
+			githubClient.ListReleasesReturns([]*github.RepositoryRelease{}, &github.Response{}, nil)
 		})
 		It("returns an error", func() {
 			err := cmd.DownloadRelease()
@@ -195,7 +264,7 @@ var _ = Describe("DownloadRelease", func() {
 			githubClient.ListReleasesReturns([]*github.RepositoryRelease{
 				makeRelease(1, "1.0", false),
 				makeRelease(1, "2.0", false),
-			}, nil)
+			}, &github.Response{}, nil)
 			cmd.Version = "3.0"
 		})
 		It("returns an error", func() {
@@ -213,7 +282,7 @@ var _ = Describe("DownloadRelease", func() {
 					makeAsset(456, "linux-asset2"),
 					makeAsset(789, "windows-asset2"),
 				),
-			}, nil)
+			}, &github.Response{}, nil)
 		})
 
 		It("returns an error", func() {
@@ -229,7 +298,7 @@ var _ = Describe("DownloadRelease", func() {
 				makeRelease(1, "1.0", false,
 					makeAsset(123, "linux-asset1"),
 				),
-			}, nil)
+			}, &github.Response{}, nil)
 			cmd.Filter = `\p`
 		})
 
@@ -244,7 +313,7 @@ var _ = Describe("DownloadRelease", func() {
 		BeforeEach(func() {
 			githubClient.ListReleasesReturns([]*github.RepositoryRelease{
 				makeRelease(1, "1.0", false),
-			}, nil)
+			}, &github.Response{}, nil)
 		})
 
 		It("returns an error", func() {
@@ -261,7 +330,7 @@ var _ = Describe("DownloadRelease", func() {
 					makeAsset(123, "windows-asset1"),
 					makeAsset(456, "windows-asset2"),
 				),
-			}, nil)
+			}, &github.Response{}, nil)
 		})
 
 		It("returns an error", func() {
@@ -278,7 +347,7 @@ var _ = Describe("DownloadRelease", func() {
 					makeAsset(123, "windows-asset1"),
 					makeAsset(456, "linux-asset2"),
 				),
-			}, nil)
+			}, &github.Response{}, nil)
 			githubClient.DownloadReleaseAssetReturns(nil, "", errors.New("download release asset error"))
 		})
 
@@ -296,7 +365,7 @@ var _ = Describe("DownloadRelease", func() {
 					makeAsset(123, "windows-asset1"),
 					makeAsset(456, "linux-asset2"),
 				),
-			}, nil)
+			}, &github.Response{}, nil)
 			githubClient.DownloadReleaseAssetReturns(nil, "download-url", nil)
 			downloader.DownloadFromURLReturns(errors.New("download-error"))
 		})
@@ -316,7 +385,7 @@ var _ = Describe("DownloadRelease", func() {
 					makeAsset(123, "windows-asset1"),
 					makeAsset(456, "linux-asset2"),
 				),
-			}, nil)
+			}, &github.Response{}, nil)
 
 			fakeReadCloser := &marmanfakes.FakeReadCloser{}
 			githubClient.DownloadReleaseAssetReturns(fakeReadCloser, "", nil)

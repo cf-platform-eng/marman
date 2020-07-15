@@ -27,7 +27,7 @@ type FakeClient struct {
 		result2 string
 		result3 error
 	}
-	ListReleasesStub        func(string, string, *githuba.ListOptions) ([]*githuba.RepositoryRelease, error)
+	ListReleasesStub        func(string, string, *githuba.ListOptions) ([]*githuba.RepositoryRelease, *githuba.Response, error)
 	listReleasesMutex       sync.RWMutex
 	listReleasesArgsForCall []struct {
 		arg1 string
@@ -36,11 +36,13 @@ type FakeClient struct {
 	}
 	listReleasesReturns struct {
 		result1 []*githuba.RepositoryRelease
-		result2 error
+		result2 *githuba.Response
+		result3 error
 	}
 	listReleasesReturnsOnCall map[int]struct {
 		result1 []*githuba.RepositoryRelease
-		result2 error
+		result2 *githuba.Response
+		result3 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -114,7 +116,7 @@ func (fake *FakeClient) DownloadReleaseAssetReturnsOnCall(i int, result1 io.Read
 	}{result1, result2, result3}
 }
 
-func (fake *FakeClient) ListReleases(arg1 string, arg2 string, arg3 *githuba.ListOptions) ([]*githuba.RepositoryRelease, error) {
+func (fake *FakeClient) ListReleases(arg1 string, arg2 string, arg3 *githuba.ListOptions) ([]*githuba.RepositoryRelease, *githuba.Response, error) {
 	fake.listReleasesMutex.Lock()
 	ret, specificReturn := fake.listReleasesReturnsOnCall[len(fake.listReleasesArgsForCall)]
 	fake.listReleasesArgsForCall = append(fake.listReleasesArgsForCall, struct {
@@ -128,10 +130,10 @@ func (fake *FakeClient) ListReleases(arg1 string, arg2 string, arg3 *githuba.Lis
 		return fake.ListReleasesStub(arg1, arg2, arg3)
 	}
 	if specificReturn {
-		return ret.result1, ret.result2
+		return ret.result1, ret.result2, ret.result3
 	}
 	fakeReturns := fake.listReleasesReturns
-	return fakeReturns.result1, fakeReturns.result2
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
 func (fake *FakeClient) ListReleasesCallCount() int {
@@ -140,7 +142,7 @@ func (fake *FakeClient) ListReleasesCallCount() int {
 	return len(fake.listReleasesArgsForCall)
 }
 
-func (fake *FakeClient) ListReleasesCalls(stub func(string, string, *githuba.ListOptions) ([]*githuba.RepositoryRelease, error)) {
+func (fake *FakeClient) ListReleasesCalls(stub func(string, string, *githuba.ListOptions) ([]*githuba.RepositoryRelease, *githuba.Response, error)) {
 	fake.listReleasesMutex.Lock()
 	defer fake.listReleasesMutex.Unlock()
 	fake.ListReleasesStub = stub
@@ -153,30 +155,33 @@ func (fake *FakeClient) ListReleasesArgsForCall(i int) (string, string, *githuba
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeClient) ListReleasesReturns(result1 []*githuba.RepositoryRelease, result2 error) {
+func (fake *FakeClient) ListReleasesReturns(result1 []*githuba.RepositoryRelease, result2 *githuba.Response, result3 error) {
 	fake.listReleasesMutex.Lock()
 	defer fake.listReleasesMutex.Unlock()
 	fake.ListReleasesStub = nil
 	fake.listReleasesReturns = struct {
 		result1 []*githuba.RepositoryRelease
-		result2 error
-	}{result1, result2}
+		result2 *githuba.Response
+		result3 error
+	}{result1, result2, result3}
 }
 
-func (fake *FakeClient) ListReleasesReturnsOnCall(i int, result1 []*githuba.RepositoryRelease, result2 error) {
+func (fake *FakeClient) ListReleasesReturnsOnCall(i int, result1 []*githuba.RepositoryRelease, result2 *githuba.Response, result3 error) {
 	fake.listReleasesMutex.Lock()
 	defer fake.listReleasesMutex.Unlock()
 	fake.ListReleasesStub = nil
 	if fake.listReleasesReturnsOnCall == nil {
 		fake.listReleasesReturnsOnCall = make(map[int]struct {
 			result1 []*githuba.RepositoryRelease
-			result2 error
+			result2 *githuba.Response
+			result3 error
 		})
 	}
 	fake.listReleasesReturnsOnCall[i] = struct {
 		result1 []*githuba.RepositoryRelease
-		result2 error
-	}{result1, result2}
+		result2 *githuba.Response
+		result3 error
+	}{result1, result2, result3}
 }
 
 func (fake *FakeClient) Invocations() map[string][][]interface{} {

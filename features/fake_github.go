@@ -3,7 +3,10 @@ package features
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
+	"net/url"
+	"strconv"
 	"syscall"
 
 	"github.com/tedsuo/ifrit/http_server"
@@ -13,14 +16,18 @@ import (
 	"github.com/tedsuo/ifrit"
 )
 
+func createString(x string) *string { return &x }
+func createBool(x bool) *bool       { return &x }
+func createInt(x int64) *int64      { return &x }
+
 type FakeGitHub struct {
 	Host          string
 	Server        ifrit.Runner
 	serverProcess ifrit.Process
-	Requests      []*http.Request
-	RequestBodies []interface{}
 
-	Releases []github.RepositoryRelease
+	ReleaseAssets   []*github.ReleaseAsset
+	Releases        []*github.RepositoryRelease
+	ReleasesPerPage int
 }
 
 func (m *FakeGitHub) logAndHandle(handler Handler) Handler {
@@ -38,75 +45,87 @@ func (m *FakeGitHub) Stop() {
 	m.serverProcess.Signal(syscall.SIGKILL)
 }
 
+func (m *FakeGitHub) makeFakeNeedsReleaseAsset(version string, platform string) *github.ReleaseAsset {
+	asset := github.ReleaseAsset{
+		ID:                 createInt(int64(len(m.ReleaseAssets) + 1)),
+		URL:                createString(fmt.Sprintf("https://localhost:9877/repos/cf-platform-eng/needs/releases/assets/%s", version)),
+		Name:               createString(fmt.Sprintf("%s-%s", version, platform)),
+		BrowserDownloadURL: createString(fmt.Sprintf("https://localhost:9877/cf-platform-eng/needs/releases/download/%s/needs-%s-%s", version, version, platform)),
+	}
+	m.ReleaseAssets = append(m.ReleaseAssets, &asset)
+
+	return &asset
+}
+
+func (m *FakeGitHub) MakeFakeNeedsRelease(version string, prerelease bool) *github.RepositoryRelease {
+	assets := []github.ReleaseAsset{
+		*m.makeFakeNeedsReleaseAsset(version, "linux"),
+		*m.makeFakeNeedsReleaseAsset(version, "darwin"),
+	}
+	release := &github.RepositoryRelease{
+		Prerelease: createBool(prerelease),
+		URL:        createString(fmt.Sprintf("https://localhost:9877/repos/cf-platform-eng/needs/releases/%s", version)),
+		TagName:    createString(version),
+		AssetsURL:  createString(fmt.Sprintf("https://localhost:9877/repos/cf-platform-eng/needs/releases/%s/assets", version)),
+		Assets:     assets,
+		Name:       createString(version),
+	}
+
+	return release
+}
+
+func makePaginatedUrl(source *url.URL, page float64) *url.URL {
+	result, _ := url.Parse(source.String())
+	queryParams := result.Query()
+	queryParams.Set("page", fmt.Sprintf("%d", int(page)))
+	result.RawQuery = queryParams.Encode()
+	return result
+}
+
 func NewFakeGitHub() *FakeGitHub {
-	fake := &FakeGitHub{}
-
-	createString := func(x string) *string {
-		return &x
+	fake := &FakeGitHub{
+		ReleaseAssets:   []*github.ReleaseAsset{},
+		Releases:        []*github.RepositoryRelease{},
+		ReleasesPerPage: 3,
 	}
 
-	createBool := func(x bool) *bool {
-		return &x
-	}
+	fake.Releases = append(
+		fake.Releases,
+		fake.MakeFakeNeedsRelease("2.0.0", false),
+		fake.MakeFakeNeedsRelease("2.0.0-rc1", true),
+		fake.MakeFakeNeedsRelease("1.2.3", false),
+		fake.MakeFakeNeedsRelease("1.0.0", false),
+	)
 
-	createInt := func(x int64) *int64 {
-		return &x
-	}
-
-	mux := mux.NewRouter()
-	mux.HandleFunc("/repos/cf-platform-eng/needs/releases", func(w http.ResponseWriter, r *http.Request) {
+	router := mux.NewRouter()
+	router.HandleFunc("/repos/cf-platform-eng/needs/releases", func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		page := 1
+		if r.URL.Query().Get("page") != "" {
+			page, err = strconv.Atoi(r.URL.Query().Get("page"))
+			if err != nil {
+				http.Error(w, "strconv.Atoi failure", http.StatusInternalServerError)
+			}
+		}
 		w.Header().Set("Content-Type", "application/json")
 
-		var firstAssets = []github.ReleaseAsset{
-			{
-				ID:                 createInt(1),
-				URL:                createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/assets/1.2.3"),
-				Name:               createString("1.2.3-linux"),
-				BrowserDownloadURL: createString("https://localhost:9877/cf-platform-eng/needs/releases/download/1.2.3/needs-1.2.3-linux"),
-			},
-			{
-				ID:                 createInt(2),
-				URL:                createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/assets/1.2.3"),
-				Name:               createString("1.2.3-darwin"),
-				BrowserDownloadURL: createString("https://localhost:9877/cf-platform-eng/needs/releases/download/1.2.3/needs-1.2.3-darwin"),
-			},
-		}
+		firstLink := makePaginatedUrl(r.URL, 1)
+		prevLink := makePaginatedUrl(r.URL, math.Max(1, float64(page-1)))
 
-		var secondAssets = []github.ReleaseAsset{
-			{
-				ID:                 createInt(3),
-				URL:                createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/assets/2.0.0"),
-				Name:               createString("2.0.0-linux"),
-				BrowserDownloadURL: createString("https://localhost:9877/cf-platform-eng/needs/releases/download/2.0.0/needs-2.0.0-linux"),
-			},
-			{
-				ID:                 createInt(4),
-				URL:                createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/assets/2.0.0"),
-				Name:               createString("2.0.0-darwin"),
-				BrowserDownloadURL: createString("https://localhost:9877/cf-platform-eng/needs/releases/download/2.0.0/needs-2.0.0-darwin"),
-			},
-		}
+		lastPage := math.Ceil(float64(len(fake.Releases)) / float64(fake.ReleasesPerPage))
+		nextLink := makePaginatedUrl(r.URL, math.Min(float64(page+1), lastPage))
+		lastLink := makePaginatedUrl(r.URL, lastPage)
 
-		var response = [...]github.RepositoryRelease{
-			{
-				Prerelease: createBool(false),
-				URL:        createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/2.0.0"),
-				TagName:    createString("2.0.0"),
-				AssetsURL:  createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/2.0.0/assets"),
-				Assets:     secondAssets,
-				Name:       createString("2.0.0"),
-			},
-			{
-				Prerelease: createBool(false),
-				URL:        createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/1.2.3"),
-				TagName:    createString("1.2.3"),
-				AssetsURL:  createString("https://localhost:9877/repos/cf-platform-eng/needs/releases/1.2.3/assets"),
-				Assets:     firstAssets,
-				Name:       createString("1.2.3"),
-			},
-		}
+		w.Header().Set("Link", fmt.Sprintf("<%s>; rel=\"first\", <%s>; rel=\"prev\", <%s>; rel=\"next\", <%s>; rel=\"last\"",
+			firstLink.String(),
+			prevLink.String(),
+			nextLink.String(),
+			lastLink.String(),
+		))
 
-		data, err := json.Marshal(response)
+		startIndex := (page - 1) * fake.ReleasesPerPage
+		endIndex := int(math.Min(float64(page*fake.ReleasesPerPage), float64(len(fake.Releases))))
+		data, err := json.Marshal(fake.Releases[startIndex:endIndex])
 		if err != nil {
 			http.Error(w, "marshal failure", http.StatusInternalServerError)
 		}
@@ -117,30 +136,23 @@ func NewFakeGitHub() *FakeGitHub {
 		}
 	})
 
-	mux.HandleFunc("/repos/cf-platform-eng/needs/releases/assets/1", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/octet-stream")
-
-		var response = "needs linux 1.2.3 asset content"
-
-		_, err := w.Write([]byte(response))
+	router.HandleFunc("/repos/cf-platform-eng/needs/releases/assets/{asset_id}", func(w http.ResponseWriter, r *http.Request) {
+		assetID, err := strconv.Atoi(mux.Vars(r)["asset_id"])
 		if err != nil {
-			http.Error(w, "printf failure", http.StatusInternalServerError)
+			http.Error(w, "strconv.Atoi failure", http.StatusInternalServerError)
 		}
-	})
+		asset := fake.ReleaseAssets[assetID-1]
 
-	mux.HandleFunc("/repos/cf-platform-eng/needs/releases/assets/3", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/octet-stream")
 
-		var response = "needs linux 2.0.0 asset content"
-
-		_, err := w.Write([]byte(response))
+		_, err = fmt.Fprintf(w, "needs %s content", *asset.Name)
 		if err != nil {
 			http.Error(w, "printf failure", http.StatusInternalServerError)
 		}
 	})
 
 	fake.Host = "http://localhost:9877/"
-	fake.Server = http_server.New("localhost:9877", mux)
+	fake.Server = http_server.New("localhost:9877", router)
 
 	return fake
 }

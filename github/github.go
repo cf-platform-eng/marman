@@ -14,7 +14,7 @@ import (
 
 //go:generate counterfeiter Client
 type Client interface {
-	ListReleases(owner, repo string, opt *github.ListOptions) ([]*github.RepositoryRelease, error)
+	ListReleases(owner, repo string, opt *github.ListOptions) ([]*github.RepositoryRelease, *github.Response, error)
 	DownloadReleaseAsset(owner, repo string, id int64) (io.ReadCloser, string, error)
 }
 
@@ -50,9 +50,9 @@ func NewGitHubClient(token, gitHubBaseURL string) (*GitHubClient, error) {
 	}, nil
 }
 
-func (c *GitHubClient) ListReleases(owner, repo string, opt *github.ListOptions) ([]*github.RepositoryRelease, error) {
-	releases, _, err := c.Client.Repositories.ListReleases(c.context, owner, repo, opt)
-	return releases, err
+func (c *GitHubClient) ListReleases(owner, repo string, opt *github.ListOptions) ([]*github.RepositoryRelease, *github.Response, error) {
+	releases, response, err := c.Client.Repositories.ListReleases(c.context, owner, repo, opt)
+	return releases, response, err
 }
 
 func (c *GitHubClient) DownloadReleaseAsset(owner, repo string, id int64) (io.ReadCloser, string, error) {

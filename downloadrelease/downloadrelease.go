@@ -38,37 +38,51 @@ func assetsToString(assets []github.ReleaseAsset, filter string) string {
 	return builder.String()
 }
 
-func (cmd *Config) DownloadRelease() error {
-	releases, err := cmd.GithubClient.ListReleases(cmd.Owner, cmd.Repo, nil)
-	if err != nil {
-		githubError, ok := err.(*github.ErrorResponse)
-		if ok && githubError.Message == "Not Found" {
-			if cmd.GithubToken == "" {
-				return fmt.Errorf("could not find %s/%s. If this repository is private, try again with a GitHub token", cmd.Owner, cmd.Repo)
-			} else {
-				return fmt.Errorf("could not find %s/%s", cmd.Owner, cmd.Repo)
-			}
-		}
-		return errors.Wrapf(err, "failed to get the list of releases for %s/%s", cmd.Owner, cmd.Repo)
-	}
-
-	if len(releases) == 0 {
-		return fmt.Errorf("no releases found for %s/%s", cmd.Owner, cmd.Repo)
-	}
-
-	var chosenRelease *github.RepositoryRelease
+func (cmd *Config) findRelease(releases []*github.RepositoryRelease) *github.RepositoryRelease {
 	for _, release := range releases {
 		if cmd.Version == "" && !*release.Prerelease {
-			chosenRelease = release
-			break
+			return release
 		} else if cmd.Version == *release.Name {
-			chosenRelease = release
-			break
+			return release
 		}
 	}
+	return nil
+}
 
-	if chosenRelease == nil {
-		return fmt.Errorf("no releases found for %s/%s with version %s", cmd.Owner, cmd.Repo, cmd.Version)
+func (cmd *Config) DownloadRelease() error {
+	listOpt := &github.ListOptions{
+		Page: 1,
+	}
+	var chosenRelease *github.RepositoryRelease
+
+	for chosenRelease == nil {
+		releases, response, err := cmd.GithubClient.ListReleases(cmd.Owner, cmd.Repo, listOpt)
+		if err != nil {
+			githubError, ok := err.(*github.ErrorResponse)
+			if ok && githubError.Message == "Not Found" {
+				if cmd.GithubToken == "" {
+					return fmt.Errorf("could not find %s/%s. If this repository is private, try again with a GitHub token", cmd.Owner, cmd.Repo)
+				} else {
+					return fmt.Errorf("could not find %s/%s", cmd.Owner, cmd.Repo)
+				}
+			}
+			return errors.Wrapf(err, "failed to get the list of releases for %s/%s", cmd.Owner, cmd.Repo)
+		}
+
+		if len(releases) == 0 {
+			return fmt.Errorf("no releases found for %s/%s", cmd.Owner, cmd.Repo)
+		}
+
+		chosenRelease = cmd.findRelease(releases)
+		if chosenRelease == nil {
+			if response.NextPage > listOpt.Page {
+				listOpt = &github.ListOptions{
+					Page: response.NextPage,
+				}
+			} else {
+				return fmt.Errorf("no releases found for %s/%s with version %s", cmd.Owner, cmd.Repo, cmd.Version)
+			}
+		}
 	}
 
 	if len(chosenRelease.Assets) == 0 {

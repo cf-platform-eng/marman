@@ -18,8 +18,6 @@ type FakeTanzuNetwork struct {
 	Host          string
 	Server        ifrit.Runner
 	serverProcess ifrit.Process
-	Requests      []*http.Request
-	RequestBodies []interface{}
 
 	ReleaseFiles map[string][]pivnet.ProductFile
 	Releases     []pivnet.Release

@@ -40,6 +40,17 @@ var _ = Describe("Downloading releases from GitHub", func() {
 		steps.And("GitHub is stopped")
 	})
 
+	Scenario("download release that is not in the first page of results", func() {
+		steps.Given("marman is built")
+		steps.And("GitHub is running")
+
+		steps.When("marman github-download-release -o cf-platform-eng -r needs -v 1.0.0 -f linux is run")
+		steps.And("it exits without error")
+
+		steps.Then("the 1.0.0 release is downloaded")
+		steps.And("GitHub is stopped")
+	})
+
 	steps.Define(func(define Definitions) {
 		var (
 			marmanPath     string
@@ -66,8 +77,8 @@ var _ = Describe("Downloading releases from GitHub", func() {
 			Expect(err).NotTo(HaveOccurred())
 		})
 
-		define.When("^marman github-download-release -o cf-platform-eng -r needs -v 1.2.3 -f linux is run$", func() {
-			command := exec.Command(marmanPath, "github-download-release", "-o", "cf-platform-eng", "-r", "needs", "-v", "1.2.3", "-f", "linux")
+		define.When(`^marman github-download-release -o cf-platform-eng -r needs -v ([0-9]\.[0-9]\.[0-9]) -f linux is run$`, func(version string) {
+			command := exec.Command(marmanPath, "github-download-release", "-o", "cf-platform-eng", "-r", "needs", "-v", version, "-f", "linux")
 			command.Env = []string{
 				fmt.Sprintf("GITHUB_NETWORK_HOSTNAME=%s", gitHub.Host),
 			}
