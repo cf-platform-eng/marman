@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu
 LABEL maintainer="Pivotal Platform Engineering ISV-CI Team <cf-isv-dashboard@pivotal.io>"
 
 RUN apt-get update && apt-get -y install ca-certificates && rm -rf /var/lib/apt/lists/*
