@@ -14,7 +14,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/tedsuo/ifrit v0.0.0-20191009134036-9a97d0632f00
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
-	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
+	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
 )
 
 go 1.14
