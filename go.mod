@@ -12,6 +12,7 @@ require (
 	github.com/onsi/gomega v1.10.4
 	github.com/pivotal-cf/go-pivnet v0.0.53
 	github.com/pkg/errors v0.9.1
+	github.com/shirou/gopsutil v3.20.12+incompatible // indirect
 	github.com/tedsuo/ifrit v0.0.0-20191009134036-9a97d0632f00
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
