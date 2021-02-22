@@ -8,14 +8,14 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
-	github.com/onsi/ginkgo v1.14.2
-	github.com/onsi/gomega v1.10.4
-	github.com/pivotal-cf/go-pivnet v0.0.53
+	github.com/onsi/ginkgo v1.15.0
+	github.com/onsi/gomega v1.10.5
+	github.com/pivotal-cf/go-pivnet v1.0.3
 	github.com/pkg/errors v0.9.1
-	github.com/shirou/gopsutil v3.20.12+incompatible // indirect
+	github.com/shirou/gopsutil v3.21.1+incompatible // indirect
 	github.com/tedsuo/ifrit v0.0.0-20191009134036-9a97d0632f00
-	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
-	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
+	golang.org/x/oauth2 v0.0.0-20210220000619-9bb904979d93
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 )
 
-go 1.14
+go 1.15

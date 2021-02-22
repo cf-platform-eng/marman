@@ -7,13 +7,12 @@ import (
 	"os"
 	"path"
 
+	"github.com/pivotal-cf/go-pivnet"
 	"github.com/pivotal-cf/go-pivnet/logshim"
 
 	"code.cloudfoundry.org/lager"
 	"github.com/Masterminds/semver"
 	. "github.com/pkg/errors"
-
-	"github.com/pivotal-cf/go-pivnet"
 )
 
 //go:generate counterfeiter Client
@@ -37,10 +36,14 @@ func NewPivNetClient(host string, token string) *PivNetClient {
 
 	return &PivNetClient{
 		Wrapper: &ClientWrapper{
-			pivnet.NewClient(pivnet.ClientConfig{
-				Host:  host,
-				Token: token,
-			}, pivnetLogger),
+			pivnet.NewClient(
+				pivnet.NewAccessTokenOrLegacyToken(token, host, "marman"),
+				pivnet.ClientConfig{
+					Host:      host,
+					UserAgent: "marman",
+				},
+				pivnetLogger,
+			),
 		},
 		Logger: lager.NewLogger("pivnet"),
 	}
