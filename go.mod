@@ -6,7 +6,7 @@ require (
 	github.com/bunniesandbeatings/goerkin v0.1.4-beta
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gorilla/mux v1.8.0
-	github.com/jessevdk/go-flags v1.4.0
+	github.com/jessevdk/go-flags v1.5.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/onsi/ginkgo v1.15.2
 	github.com/onsi/gomega v1.11.0
