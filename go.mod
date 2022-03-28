@@ -8,7 +8,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.18.1
+	github.com/onsi/gomega v1.19.0
 	github.com/pivotal-cf/go-pivnet v1.0.3
 	github.com/pkg/errors v0.9.1
 	github.com/tedsuo/ifrit v0.0.0-20220120221754-dd274de71113
@@ -24,7 +24,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/shirou/gopsutil v3.21.1+incompatible // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
