@@ -1,5 +1,5 @@
 SHELL = /bin/bash
-GO-VER = go1.17
+GO-VER = go1.19
 
 default: build
 
@@ -9,15 +9,6 @@ deps-go-binary:
 		echo "Actual: $$(go version)" && \
 	 	go version | grep $(GO-VER) > /dev/null
 
-deps-modules: deps-goimports deps-go-binary
-	go mod download
-
-deps-counterfeiter: deps-modules
-	command -v counterfeiter >/dev/null 2>&1 || go get -u github.com/maxbrunsfeld/counterfeiter/v6
-
-deps-ginkgo: deps-go-binary
-	command -v ginkgo >/dev/null 2>&1 || go get -u github.com/onsi/ginkgo/ginkgo github.com/onsi/gomega
-
 HAS_GO_IMPORTS := $(shell command -v goimports;)
 
 deps-goimports: deps-go-binary
@@ -26,20 +17,28 @@ ifndef HAS_GO_IMPORTS
 endif
 
 # #### CLEAN ####
+
 clean: deps-go-binary
 	rm -rf build/*
 	go clean --modcache
 
-
 # #### DEPS ####
+
+deps-modules: deps-goimports deps-go-binary
+	go mod download
+
+deps-counterfeiter: deps-modules
+	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
+
+deps-ginkgo: deps-go-binary
+	go install github.com/onsi/ginkgo/ginkgo@latest
 
 deps: deps-modules deps-counterfeiter deps-ginkgo
 
 # #### BUILD ####
+
 SRC = $(shell find . -name "*.go" | grep -v "_test\." )
-
 VERSION := $(or $(VERSION), dev)
-
 LDFLAGS="-X github.com/cf-platform-eng/marman/version.Version=$(VERSION)"
 
 build/marman: $(SRC) deps
@@ -62,6 +61,8 @@ build/marman-darwin: $(SRC) deps
 build-image: build/marman-linux
 	docker build --tag cfplatformeng/marman:${VERSION} --file Dockerfile .
 
+# #### TESTS ####
+
 test-units: deps lint
 	ginkgo -r -skipPackage features .
 
@@ -72,3 +73,7 @@ test: test-units test-features
 
 lint: deps-goimports
 	git ls-files | grep '.go$$' | xargs goimports -l -w
+
+.PHONY: set-pipeline
+set-pipeline: ci/pipeline.yaml
+	fly -t ppe-isv set-pipeline -p marman -c ci/pipeline.yaml
