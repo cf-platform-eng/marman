@@ -11,10 +11,6 @@ deps-go-binary:
 
 HAS_GO_IMPORTS := $(shell command -v goimports;)
 
-deps-goimports: deps-go-binary
-ifndef HAS_GO_IMPORTS
-	go get -u golang.org/x/tools/cmd/goimports
-endif
 
 # #### CLEAN ####
 
@@ -32,6 +28,11 @@ deps-counterfeiter: deps-modules
 
 deps-ginkgo: deps-go-binary
 	go install github.com/onsi/ginkgo/ginkgo@latest
+
+deps-goimports: deps-go-binary
+ifndef HAS_GO_IMPORTS
+	go install golang.org/x/tools/cmd/goimports@latest
+endif
 
 deps: deps-modules deps-counterfeiter deps-ginkgo
 
