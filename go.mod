@@ -8,7 +8,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.20.2
+	github.com/onsi/gomega v1.21.1
 	github.com/pivotal-cf/go-pivnet v1.0.3
 	github.com/pkg/errors v0.9.1
 	github.com/tedsuo/ifrit v0.0.0-20220120221754-dd274de71113
