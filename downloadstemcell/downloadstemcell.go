@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	OS           string `short:"o" long:"os" required:"true" description:"Stemcell OS name" choice:"ubuntu-trusty" choice:"ubuntu-xenial"`
+	OS           string `short:"o" long:"os" required:"true" description:"Stemcell OS name" choice:"ubuntu-jammy" choice:"ubuntu-trusty" choice:"ubuntu-xenial"`
 	Version      string `short:"v" long:"version" default:"X" default-mask:"latest GA" description:"Stemcell version"`
 	IAAS         string `short:"i" long:"iaas" required:"true" description:"Specific stemcell IaaS to download"`
 	PivnetToken  string `long:"pivnet-token" description:"Authentication token for PivNet" env:"PIVNET_TOKEN"`
@@ -26,6 +26,8 @@ func stemcellOSToSlug(os string) (string, error) {
 		return "", errors.New("missing stemcell os")
 	}
 	switch os {
+	case "ubuntu-jammy":
+		return "stemcells-ubuntu-jammy", nil
 	case "ubuntu-trusty":
 		return "stemcells-ubuntu", nil
 	case "ubuntu-xenial":
