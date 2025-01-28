@@ -12,13 +12,12 @@ require (
 	github.com/pivotal-cf/go-pivnet v1.0.3
 	github.com/pkg/errors v0.9.1
 	github.com/tedsuo/ifrit v0.0.0-20220120221754-dd274de71113
-	golang.org/x/oauth2 v0.9.0
+	golang.org/x/oauth2 v0.25.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
@@ -30,7 +29,6 @@ require (
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
