@@ -1,5 +1,7 @@
 module github.com/cf-platform-eng/marman
 
+go 1.23.0
+
 require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	github.com/Masterminds/semver v1.5.0
@@ -34,5 +36,3 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-go 1.19
