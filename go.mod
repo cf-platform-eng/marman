@@ -14,7 +14,7 @@ require (
 	github.com/pivotal-cf/go-pivnet v1.0.3
 	github.com/pkg/errors v0.9.1
 	github.com/tedsuo/ifrit v0.0.0-20220120221754-dd274de71113
-	golang.org/x/oauth2 v0.28.0
+	golang.org/x/oauth2 v0.29.0
 )
 
 require (
