@@ -115,16 +115,35 @@ jobs:
           tag: version/version
           globs:
             - build/*
-      - put: docker-image
-        inputs:
-          - build
-          - source
-          - version
+      - get: ubuntu-image
         params:
-          build: .
-          dockerfile: source/Dockerfile
-          tag_as_latest: false
-          tag_file: version/version
+          format: oci
+      - file: version/version
+        load_var: image_version
+      - task: build-oci
+        privileged: true
+        image: oci-build-task
+        config:
+          platform: linux
+          inputs:
+            - name: source
+            - name: ubuntu-image
+          outputs:
+            - name: image
+          params:
+            CONTEXT: .
+            DOCKERFILE: source/Dockerfile
+            IMAGE_ARG_ubuntu_image: ubuntu-image/image.tar
+          run:
+            path: build
+        output_mapping:
+          image: docker-image-out
+      - put: docker-image
+        inputs: detect
+        attempts: 3
+        params:
+          image: docker-image-out/image.tar
+          version: ((.:image_version))
 
   - name: release
     serial_groups: [version]
