@@ -3,9 +3,9 @@ resource_types:
   - name: pull-request
     type: registry-image
     source:
-      repository: mirror.gcr.io/teliaoss/github-pr-resource
-      username: _json_key
-      password: ((gcp_artifact_registry.service_account_key))
+      repository: ((artifactory.registry_mirror))/teliaoss/github-pr-resource
+      username: ((artifactory.production_username))
+      password: ((artifactory.production_password))
 
 resources:
   - name: source
@@ -36,12 +36,12 @@ resources:
       release: true
 
   - name: docker-image
-    type: docker-image
-    icon: docker
+    type: registry-image
+    icon: rodent
     source:
-      repository: us-west1-docker.pkg.dev/isv-tile-partners/tanzu-isv-engineering/marman
-      username: _json_key
-      password: ((gcp_artifact_registry.service_account_key))
+      repository: tas-ecosystem-docker-prod-local.usw1.packages.broadcom.com/tanzu-isv-engineering/marman
+      username: ((artifactory.production_username))
+      password: ((artifactory.production_password))
 
   - name: version
     type: semver
@@ -57,10 +57,18 @@ resources:
     type: registry-image
     icon: docker
     source:
-      repository: mirror.gcr.io/golang
+      repository: ((artifactory.registry_mirror))/golang
+      username: ((artifactory.production_username))
+      password: ((artifactory.production_password))
       tag: 1.23
-      username: _json_key
-      password: ((gcp_artifact_registry.service_account_key))
+
+  - name: ubuntu-image
+    type: registry-image
+    icon: docker
+    source:
+      repository: ((artifactory.registry_mirror))/ubuntu
+      username: ((artifactory.production_username))
+      password: ((artifactory.production_password))
 
   - name: pull-requests
     type: pull-request
@@ -100,24 +108,23 @@ jobs:
       - put: version
         inputs: detect
         params: { file: version/version }
-      - in_parallel:
-        - put: pre-release
-          inputs: detect
-          params:
-            name: version/version
-            tag: version/version
-            globs:
-              - build/*
-        - put: docker-image
-          inputs:
-            - build
-            - source
-            - version
-          params:
-            build: .
-            dockerfile: source/Dockerfile
-            tag_as_latest: false
-            tag_file: version/version
+      - put: pre-release
+        inputs: detect
+        params:
+          name: version/version
+          tag: version/version
+          globs:
+            - build/*
+      - put: docker-image
+        inputs:
+          - build
+          - source
+          - version
+        params:
+          build: .
+          dockerfile: source/Dockerfile
+          tag_as_latest: false
+          tag_file: version/version
 
   - name: release
     serial_groups: [version]
@@ -142,16 +149,37 @@ jobs:
             tag: version/version
             globs:
               - build/*
-        - put: docker-image
-          inputs:
-            - build
-            - source
-            - version
-          params:
-            build: .
-            dockerfile: source/Dockerfile
-            tag_as_latest: true
-            tag_file: version/version
+        - do:
+          - get: ubuntu-image
+            params:
+              format: oci
+          - file: version/version
+            load_var: image_version
+          - task: build-oci
+            privileged: true
+            image: oci-build-task
+            config:
+              platform: linux
+              inputs:
+                - name: source
+                - name: ubuntu-image
+              outputs:
+                - name: image
+              params:
+                CONTEXT: .
+                DOCKERFILE: source/Dockerfile
+                IMAGE_ARG_ubuntu_image: ubuntu-image/image.tar
+              run:
+                path: build
+            output_mapping:
+              image: docker-image-out
+          - put: docker-image
+            inputs: detect
+            attempts: 3
+            params:
+              image: docker-image-out/image.tar
+              version: ((.:image_version))
+              bump_aliases: true
       - put: version
         inputs: detect
         params: { bump: patch }
