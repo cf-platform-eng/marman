@@ -130,6 +130,7 @@ jobs:
           format: oci
       - file: version/version
         load_var: image_version
+      - get: oci-build-task
       - task: build-oci
         privileged: true
         image: oci-build-task
@@ -137,6 +138,7 @@ jobs:
           platform: linux
           inputs:
             - name: source
+            - name: build
             - name: ubuntu-image
           outputs:
             - name: image
@@ -184,6 +186,7 @@ jobs:
               format: oci
           - file: version/version
             load_var: image_version
+          - get: oci-build-task
           - task: build-oci
             privileged: true
             image: oci-build-task
@@ -191,6 +194,7 @@ jobs:
               platform: linux
               inputs:
                 - name: source
+                - name: build
                 - name: ubuntu-image
               outputs:
                 - name: image
