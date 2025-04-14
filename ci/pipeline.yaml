@@ -79,6 +79,7 @@ resources:
       repository: ((artifactory.registry_mirror))/ubuntu
       username: ((artifactory.production_username))
       password: ((artifactory.production_password))
+      tag: latest
 
   - name: pull-requests
     type: pull-request
