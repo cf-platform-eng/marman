@@ -16,5 +16,5 @@ run:
       popd
 
 outputs:
-  - name: build
+  - name: marman-build
     path: source/build
