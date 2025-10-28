@@ -14,7 +14,6 @@ resources:
     icon: oci
     source:
       repository: ((artifactory.registry_mirror))/concourse/oci-build-task
-      tag: 0.11.1
       username: ((artifactory.production_username))
       password: ((artifactory.production_password))
 
@@ -70,7 +69,7 @@ resources:
       repository: ((artifactory.registry_mirror))/golang
       username: ((artifactory.production_username))
       password: ((artifactory.production_password))
-      tag: 1.23
+      tag: 1.25
 
   - name: ubuntu-image
     type: registry-image
