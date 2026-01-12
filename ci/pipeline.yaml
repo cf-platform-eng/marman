@@ -3,7 +3,8 @@ resource_types:
   - name: pull-request
     type: registry-image
     source:
-      repository: ((artifactory.registry_mirror))/teliaoss/github-pr-resource
+      repository: ((artifactory.production_registry))/github-pr-resource
+      tag: 0.24.0
       username: ((artifactory.production_username))
       password: ((artifactory.production_password))
 
@@ -14,7 +15,6 @@ resources:
     icon: oci
     source:
       repository: ((artifactory.registry_mirror))/concourse/oci-build-task
-      tag: 0.11.1
       username: ((artifactory.production_username))
       password: ((artifactory.production_password))
 
@@ -49,7 +49,7 @@ resources:
     type: registry-image
     icon: rodent
     source:
-      repository: tas-ecosystem-docker-prod-local.usw1.packages.broadcom.com/tanzu-isv-engineering/marman
+      repository: ((artifactory.production_registry))/tanzu-isv-engineering/marman
       username: ((artifactory.production_username))
       password: ((artifactory.production_password))
 
@@ -70,7 +70,7 @@ resources:
       repository: ((artifactory.registry_mirror))/golang
       username: ((artifactory.production_username))
       password: ((artifactory.production_password))
-      tag: 1.23
+      tag: 1.25
 
   - name: ubuntu-image
     type: registry-image

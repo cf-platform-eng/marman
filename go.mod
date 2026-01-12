@@ -1,6 +1,6 @@
 module github.com/cf-platform-eng/marman
 
-go 1.23.0
+go 1.24
 
 require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
