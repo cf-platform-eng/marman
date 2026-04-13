@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/cf-platform-eng/marman"
 	github2 "github.com/cf-platform-eng/marman/github"
 	"github.com/google/go-github/v25/github"

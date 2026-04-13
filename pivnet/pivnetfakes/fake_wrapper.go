@@ -2,13 +2,13 @@
 package pivnetfakes
 
 import (
-	io "io"
-	os "os"
-	sync "sync"
+	"io"
+	"os"
+	"sync"
 
-	pivnet "github.com/cf-platform-eng/marman/pivnet"
-	pivneta "github.com/pivotal-cf/go-pivnet"
-	download "github.com/pivotal-cf/go-pivnet/download"
+	"github.com/cf-platform-eng/marman/pivnet"
+	pivneta "github.com/pivotal-cf/go-pivnet/v9"
+	"github.com/pivotal-cf/go-pivnet/v9/download"
 )
 
 type FakeWrapper struct {
@@ -90,15 +90,16 @@ func (fake *FakeWrapper) AcceptEULA(arg1 string, arg2 int) error {
 		arg1 string
 		arg2 int
 	}{arg1, arg2})
+	stub := fake.AcceptEULAStub
+	fakeReturns := fake.acceptEULAReturns
 	fake.recordInvocation("AcceptEULA", []interface{}{arg1, arg2})
 	fake.acceptEULAMutex.Unlock()
-	if fake.AcceptEULAStub != nil {
-		return fake.AcceptEULAStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.acceptEULAReturns
 	return fakeReturns.result1
 }
 
@@ -154,15 +155,16 @@ func (fake *FakeWrapper) DownloadProductFile(arg1 *download.FileInfo, arg2 strin
 		arg4 int
 		arg5 io.Writer
 	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.DownloadProductFileStub
+	fakeReturns := fake.downloadProductFileReturns
 	fake.recordInvocation("DownloadProductFile", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.downloadProductFileMutex.Unlock()
-	if fake.DownloadProductFileStub != nil {
-		return fake.DownloadProductFileStub(arg1, arg2, arg3, arg4, arg5)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.downloadProductFileReturns
 	return fakeReturns.result1
 }
 
@@ -215,15 +217,16 @@ func (fake *FakeWrapper) ListFilesForRelease(arg1 string, arg2 int) ([]pivneta.P
 		arg1 string
 		arg2 int
 	}{arg1, arg2})
+	stub := fake.ListFilesForReleaseStub
+	fakeReturns := fake.listFilesForReleaseReturns
 	fake.recordInvocation("ListFilesForRelease", []interface{}{arg1, arg2})
 	fake.listFilesForReleaseMutex.Unlock()
-	if fake.ListFilesForReleaseStub != nil {
-		return fake.ListFilesForReleaseStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.listFilesForReleaseReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -278,15 +281,16 @@ func (fake *FakeWrapper) ListReleases(arg1 string) ([]pivneta.Release, error) {
 	fake.listReleasesArgsForCall = append(fake.listReleasesArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.ListReleasesStub
+	fakeReturns := fake.listReleasesReturns
 	fake.recordInvocation("ListReleases", []interface{}{arg1})
 	fake.listReleasesMutex.Unlock()
-	if fake.ListReleasesStub != nil {
-		return fake.ListReleasesStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.listReleasesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -341,15 +345,16 @@ func (fake *FakeWrapper) NewFileInfo(arg1 *os.File) (*download.FileInfo, error) 
 	fake.newFileInfoArgsForCall = append(fake.newFileInfoArgsForCall, struct {
 		arg1 *os.File
 	}{arg1})
+	stub := fake.NewFileInfoStub
+	fakeReturns := fake.newFileInfoReturns
 	fake.recordInvocation("NewFileInfo", []interface{}{arg1})
 	fake.newFileInfoMutex.Unlock()
-	if fake.NewFileInfoStub != nil {
-		return fake.NewFileInfoStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.newFileInfoReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -401,16 +406,6 @@ func (fake *FakeWrapper) NewFileInfoReturnsOnCall(i int, result1 *download.FileI
 func (fake *FakeWrapper) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.acceptEULAMutex.RLock()
-	defer fake.acceptEULAMutex.RUnlock()
-	fake.downloadProductFileMutex.RLock()
-	defer fake.downloadProductFileMutex.RUnlock()
-	fake.listFilesForReleaseMutex.RLock()
-	defer fake.listFilesForReleaseMutex.RUnlock()
-	fake.listReleasesMutex.RLock()
-	defer fake.listReleasesMutex.RUnlock()
-	fake.newFileInfoMutex.RLock()
-	defer fake.newFileInfoMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

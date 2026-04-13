@@ -7,7 +7,7 @@ import (
 	"github.com/cf-platform-eng/marman/pivnet/pivnetfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/pivotal-cf/go-pivnet"
+	"github.com/pivotal-cf/go-pivnet/v9"
 )
 
 var _ = Describe("Download Tile", func() {

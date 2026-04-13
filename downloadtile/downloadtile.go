@@ -8,7 +8,7 @@ import (
 	"github.com/Masterminds/semver"
 
 	pivnetClient "github.com/cf-platform-eng/marman/pivnet"
-	"github.com/pivotal-cf/go-pivnet"
+	"github.com/pivotal-cf/go-pivnet/v9"
 	"github.com/pkg/errors"
 )
 

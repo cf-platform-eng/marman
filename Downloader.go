@@ -8,13 +8,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-//go:generate counterfeiter ReadCloser
+//go:generate go tool counterfeiter -generate
+//counterfeiter:generate . ReadCloser
 type ReadCloser interface {
 	io.Reader
 	io.Closer
 }
 
-//go:generate counterfeiter Downloader
+//counterfeiter:generate . Downloader
 type Downloader interface {
 	DownloadFromReader(filename string, closer io.ReadCloser) error
 	DownloadFromURL(filename string, url string) error

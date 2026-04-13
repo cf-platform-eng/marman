@@ -2,11 +2,11 @@
 package pivnetfakes
 
 import (
-	sync "sync"
+	"sync"
 
-	semver "github.com/Masterminds/semver"
-	pivnet "github.com/cf-platform-eng/marman/pivnet"
-	pivneta "github.com/pivotal-cf/go-pivnet"
+	"github.com/Masterminds/semver"
+	"github.com/cf-platform-eng/marman/pivnet"
+	pivneta "github.com/pivotal-cf/go-pivnet/v9"
 )
 
 type FakeClient struct {
@@ -22,7 +22,6 @@ type FakeClient struct {
 	acceptEULAReturnsOnCall map[int]struct {
 		result1 error
 	}
-
 	DownloadFileStub        func(string, int, *pivneta.ProductFile) error
 	downloadFileMutex       sync.RWMutex
 	downloadFileArgsForCall []struct {
@@ -50,7 +49,6 @@ type FakeClient struct {
 		result1 *pivneta.Release
 		result2 error
 	}
-
 	ListFilesForReleaseStub        func(string, int) ([]pivneta.ProductFile, error)
 	listFilesForReleaseMutex       sync.RWMutex
 	listFilesForReleaseArgsForCall []struct {
@@ -76,15 +74,16 @@ func (fake *FakeClient) AcceptEULA(arg1 string, arg2 int) error {
 		arg1 string
 		arg2 int
 	}{arg1, arg2})
+	stub := fake.AcceptEULAStub
+	fakeReturns := fake.acceptEULAReturns
 	fake.recordInvocation("AcceptEULA", []interface{}{arg1, arg2})
 	fake.acceptEULAMutex.Unlock()
-	if fake.AcceptEULAStub != nil {
-		return fake.AcceptEULAStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.acceptEULAReturns
 	return fakeReturns.result1
 }
 
@@ -138,15 +137,16 @@ func (fake *FakeClient) DownloadFile(arg1 string, arg2 int, arg3 *pivneta.Produc
 		arg2 int
 		arg3 *pivneta.ProductFile
 	}{arg1, arg2, arg3})
+	stub := fake.DownloadFileStub
+	fakeReturns := fake.downloadFileReturns
 	fake.recordInvocation("DownloadFile", []interface{}{arg1, arg2, arg3})
 	fake.downloadFileMutex.Unlock()
-	if fake.DownloadFileStub != nil {
-		return fake.DownloadFileStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.downloadFileReturns
 	return fakeReturns.result1
 }
 
@@ -199,15 +199,16 @@ func (fake *FakeClient) FindReleaseByVersionConstraint(arg1 string, arg2 *semver
 		arg1 string
 		arg2 *semver.Constraints
 	}{arg1, arg2})
+	stub := fake.FindReleaseByVersionConstraintStub
+	fakeReturns := fake.findReleaseByVersionConstraintReturns
 	fake.recordInvocation("FindReleaseByVersionConstraint", []interface{}{arg1, arg2})
 	fake.findReleaseByVersionConstraintMutex.Unlock()
-	if fake.FindReleaseByVersionConstraintStub != nil {
-		return fake.FindReleaseByVersionConstraintStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.findReleaseByVersionConstraintReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -263,15 +264,16 @@ func (fake *FakeClient) ListFilesForRelease(arg1 string, arg2 int) ([]pivneta.Pr
 		arg1 string
 		arg2 int
 	}{arg1, arg2})
+	stub := fake.ListFilesForReleaseStub
+	fakeReturns := fake.listFilesForReleaseReturns
 	fake.recordInvocation("ListFilesForRelease", []interface{}{arg1, arg2})
 	fake.listFilesForReleaseMutex.Unlock()
-	if fake.ListFilesForReleaseStub != nil {
-		return fake.ListFilesForReleaseStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.listFilesForReleaseReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -323,16 +325,6 @@ func (fake *FakeClient) ListFilesForReleaseReturnsOnCall(i int, result1 []pivnet
 func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.acceptEULAMutex.RLock()
-	defer fake.acceptEULAMutex.RUnlock()
-
-	fake.downloadFileMutex.RLock()
-	defer fake.downloadFileMutex.RUnlock()
-	fake.findReleaseByVersionConstraintMutex.RLock()
-	defer fake.findReleaseByVersionConstraintMutex.RUnlock()
-
-	fake.listFilesForReleaseMutex.RLock()
-	defer fake.listFilesForReleaseMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

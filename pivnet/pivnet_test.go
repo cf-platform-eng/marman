@@ -4,15 +4,15 @@ import (
 	"errors"
 	"os"
 
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/Masterminds/semver"
 	"github.com/cf-platform-eng/marman/pivnet"
 	"github.com/cf-platform-eng/marman/pivnet/pivnetfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
-	actualpivnet "github.com/pivotal-cf/go-pivnet"
-	"github.com/pivotal-cf/go-pivnet/download"
+	actualpivnet "github.com/pivotal-cf/go-pivnet/v9"
+	"github.com/pivotal-cf/go-pivnet/v9/download"
 )
 
 var _ = Describe("FindReleaseByVersionConstraint", func() {
