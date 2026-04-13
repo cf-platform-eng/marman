@@ -4,11 +4,11 @@ import (
 	"io"
 	"os"
 
-	"github.com/pivotal-cf/go-pivnet"
-	"github.com/pivotal-cf/go-pivnet/download"
+	"github.com/pivotal-cf/go-pivnet/v9"
+	"github.com/pivotal-cf/go-pivnet/v9/download"
 )
 
-//go:generate counterfeiter Wrapper
+//counterfeiter:generate . Wrapper
 type Wrapper interface {
 	AcceptEULA(product string, releaseID int) error
 	ListReleases(product string) ([]pivnet.Release, error)

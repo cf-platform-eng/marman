@@ -2,10 +2,10 @@
 package githubfakes
 
 import (
-	io "io"
-	sync "sync"
+	"io"
+	"sync"
 
-	github "github.com/cf-platform-eng/marman/github"
+	"github.com/cf-platform-eng/marman/github"
 	githuba "github.com/google/go-github/v25/github"
 )
 
@@ -56,15 +56,16 @@ func (fake *FakeClient) DownloadReleaseAsset(arg1 string, arg2 string, arg3 int6
 		arg2 string
 		arg3 int64
 	}{arg1, arg2, arg3})
+	stub := fake.DownloadReleaseAssetStub
+	fakeReturns := fake.downloadReleaseAssetReturns
 	fake.recordInvocation("DownloadReleaseAsset", []interface{}{arg1, arg2, arg3})
 	fake.downloadReleaseAssetMutex.Unlock()
-	if fake.DownloadReleaseAssetStub != nil {
-		return fake.DownloadReleaseAssetStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.downloadReleaseAssetReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -124,15 +125,16 @@ func (fake *FakeClient) ListReleases(arg1 string, arg2 string, arg3 *githuba.Lis
 		arg2 string
 		arg3 *githuba.ListOptions
 	}{arg1, arg2, arg3})
+	stub := fake.ListReleasesStub
+	fakeReturns := fake.listReleasesReturns
 	fake.recordInvocation("ListReleases", []interface{}{arg1, arg2, arg3})
 	fake.listReleasesMutex.Unlock()
-	if fake.ListReleasesStub != nil {
-		return fake.ListReleasesStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.listReleasesReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -187,10 +189,6 @@ func (fake *FakeClient) ListReleasesReturnsOnCall(i int, result1 []*githuba.Repo
 func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.downloadReleaseAssetMutex.RLock()
-	defer fake.downloadReleaseAssetMutex.RUnlock()
-	fake.listReleasesMutex.RLock()
-	defer fake.listReleasesMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

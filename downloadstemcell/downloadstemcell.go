@@ -16,7 +16,8 @@ type Config struct {
 	Downloader   Downloader
 }
 
-//go:generate counterfeiter Downloader
+//go:generate go tool counterfeiter -generate
+//counterfeiter:generate . Downloader
 type Downloader interface {
 	DownloadFromPivnet(slug, file, version, tanzuNetHost, pivnetToken string) error
 }

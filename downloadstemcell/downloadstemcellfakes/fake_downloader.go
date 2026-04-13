@@ -2,9 +2,9 @@
 package downloadstemcellfakes
 
 import (
-	sync "sync"
+	"sync"
 
-	downloadstemcell "github.com/cf-platform-eng/marman/downloadstemcell"
+	"github.com/cf-platform-eng/marman/downloadstemcell"
 )
 
 type FakeDownloader struct {
@@ -37,15 +37,16 @@ func (fake *FakeDownloader) DownloadFromPivnet(arg1 string, arg2 string, arg3 st
 		arg4 string
 		arg5 string
 	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.DownloadFromPivnetStub
+	fakeReturns := fake.downloadFromPivnetReturns
 	fake.recordInvocation("DownloadFromPivnet", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.downloadFromPivnetMutex.Unlock()
-	if fake.DownloadFromPivnetStub != nil {
-		return fake.DownloadFromPivnetStub(arg1, arg2, arg3, arg4, arg5)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.downloadFromPivnetReturns
 	return fakeReturns.result1
 }
 
@@ -94,8 +95,6 @@ func (fake *FakeDownloader) DownloadFromPivnetReturnsOnCall(i int, result1 error
 func (fake *FakeDownloader) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.downloadFromPivnetMutex.RLock()
-	defer fake.downloadFromPivnetMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

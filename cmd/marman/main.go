@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/cf-platform-eng/marman/downloadrelease"
 
 	"github.com/cf-platform-eng/marman"

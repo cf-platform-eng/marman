@@ -12,7 +12,8 @@ import (
 	"golang.org/x/oauth2"
 )
 
-//go:generate counterfeiter Client
+//go:generate go tool counterfeiter -generate
+//counterfeiter:generate . Client
 type Client interface {
 	ListReleases(owner, repo string, opt *github.ListOptions) ([]*github.RepositoryRelease, *github.Response, error)
 	DownloadReleaseAsset(owner, repo string, id int64) (io.ReadCloser, string, error)

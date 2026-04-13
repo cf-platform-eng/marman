@@ -9,35 +9,18 @@ deps-go-binary:
 		echo "Actual: $$(go version)" && \
 	 	go version | grep $(GO-VER) > /dev/null
 
-HAS_GO_IMPORTS := $(shell command -v goimports;)
-
-
 # #### CLEAN ####
-
-clean: deps-go-binary
+clean:
 	rm -rf build/*
 	go clean --modcache
 
 # #### DEPS ####
-
-deps-modules: deps-goimports deps-go-binary
+deps-modules:
 	go mod download
 
-deps-counterfeiter: deps-modules
-	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
-
-deps-ginkgo: deps-go-binary
-	go install github.com/onsi/ginkgo/ginkgo@latest
-
-deps-goimports: deps-go-binary
-ifndef HAS_GO_IMPORTS
-	go install golang.org/x/tools/cmd/goimports@latest
-endif
-
-deps: deps-modules deps-counterfeiter deps-ginkgo
+deps: deps-modules
 
 # #### BUILD ####
-
 SRC = $(shell find . -name "*.go" | grep -v "_test\." )
 VERSION := $(or $(VERSION), dev)
 LDFLAGS="-X github.com/cf-platform-eng/marman/version.Version=$(VERSION)"
@@ -63,17 +46,15 @@ build-image: build/marman-linux
 	docker build --tag cfplatformeng/marman:${VERSION} --file Dockerfile .
 
 # #### TESTS ####
-
 test-units: deps lint
-	ginkgo -r -skipPackage features .
+	go tool ginkgo -r --skipPackage features .
 
 test-features: deps
-	ginkgo -r -tags=feature features
+	go tool ginkgo -r --tags=feature features
 
 test: test-units test-features
 
-lint: deps-goimports
-	git ls-files | grep '.go$$' | xargs goimports -l -w
+lint: deps
 
 .PHONY: set-pipeline
 set-pipeline: ci/pipeline.yaml

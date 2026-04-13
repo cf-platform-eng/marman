@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/pivotal-cf/go-pivnet"
+	"github.com/pivotal-cf/go-pivnet/v9"
 	"github.com/tedsuo/ifrit"
 	"github.com/tedsuo/ifrit/http_server"
 )

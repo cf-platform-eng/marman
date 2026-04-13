@@ -7,15 +7,16 @@ import (
 	"os"
 	"path"
 
-	"github.com/pivotal-cf/go-pivnet"
-	"github.com/pivotal-cf/go-pivnet/logshim"
+	"github.com/pivotal-cf/go-pivnet/v9"
+	"github.com/pivotal-cf/go-pivnet/v9/logshim"
 
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/lager/v3"
 	"github.com/Masterminds/semver"
 	. "github.com/pkg/errors"
 )
 
-//go:generate counterfeiter Client
+//go:generate go tool counterfeiter -generate
+//counterfeiter:generate . Client
 type Client interface {
 	AcceptEULA(product string, releaseID int) error
 	ListFilesForRelease(product string, releaseID int) ([]pivnet.ProductFile, error)
@@ -37,7 +38,7 @@ func NewPivNetClient(host string, token string) *PivNetClient {
 	return &PivNetClient{
 		Wrapper: &ClientWrapper{
 			pivnet.NewClient(
-				pivnet.NewAccessTokenOrLegacyToken(token, host, "marman"),
+				pivnet.NewAccessTokenOrLegacyToken(token, host, false, "marman"),
 				pivnet.ClientConfig{
 					Host:      host,
 					UserAgent: "marman",

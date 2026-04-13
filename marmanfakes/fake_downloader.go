@@ -2,10 +2,10 @@
 package marmanfakes
 
 import (
-	io "io"
-	sync "sync"
+	"io"
+	"sync"
 
-	marman "github.com/cf-platform-eng/marman"
+	"github.com/cf-platform-eng/marman"
 )
 
 type FakeDownloader struct {
@@ -44,15 +44,16 @@ func (fake *FakeDownloader) DownloadFromReader(arg1 string, arg2 io.ReadCloser) 
 		arg1 string
 		arg2 io.ReadCloser
 	}{arg1, arg2})
+	stub := fake.DownloadFromReaderStub
+	fakeReturns := fake.downloadFromReaderReturns
 	fake.recordInvocation("DownloadFromReader", []interface{}{arg1, arg2})
 	fake.downloadFromReaderMutex.Unlock()
-	if fake.DownloadFromReaderStub != nil {
-		return fake.DownloadFromReaderStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.downloadFromReaderReturns
 	return fakeReturns.result1
 }
 
@@ -105,15 +106,16 @@ func (fake *FakeDownloader) DownloadFromURL(arg1 string, arg2 string) error {
 		arg1 string
 		arg2 string
 	}{arg1, arg2})
+	stub := fake.DownloadFromURLStub
+	fakeReturns := fake.downloadFromURLReturns
 	fake.recordInvocation("DownloadFromURL", []interface{}{arg1, arg2})
 	fake.downloadFromURLMutex.Unlock()
-	if fake.DownloadFromURLStub != nil {
-		return fake.DownloadFromURLStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.downloadFromURLReturns
 	return fakeReturns.result1
 }
 
@@ -162,10 +164,6 @@ func (fake *FakeDownloader) DownloadFromURLReturnsOnCall(i int, result1 error) {
 func (fake *FakeDownloader) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.downloadFromReaderMutex.RLock()
-	defer fake.downloadFromReaderMutex.RUnlock()
-	fake.downloadFromURLMutex.RLock()
-	defer fake.downloadFromURLMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
